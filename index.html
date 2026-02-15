@@ -35,22 +35,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge-red{background:rgba(225,112,85,.15);color:var(--red)}
 .badge-blue{background:rgba(116,185,255,.15);color:var(--blue)}
 .badge-purple{background:rgba(162,155,254,.15);color:var(--accent2)}
-/* Timeline Chart */
-.timeline{position:relative;padding-top:40px}
-.timeline-header{display:flex;gap:150px;margin-bottom:16px;padding-left:200px;font-size:11px;color:var(--dim);font-weight:600}
-.timeline-dates{display:flex;gap:0;position:absolute;top:0;left:200px;right:0}
-.timeline-date{flex:1;text-align:center;font-size:10px;color:var(--dim);padding:4px 0;border-left:1px solid var(--border)}
-.timeline-date.today{color:var(--accent2);font-weight:700;background:rgba(162,155,254,.1)}
-.timeline-track{display:flex;align-items:center;margin-bottom:8px;min-height:32px}
-.timeline-label{width:190px;font-size:12px;color:var(--text);flex-shrink:0;padding-right:10px}
-.timeline-bars{flex:1;display:flex;gap:0;position:relative}
-.timeline-bar-cell{flex:1;height:24px;border-left:1px solid var(--border)}
-.timeline-bar{position:absolute;height:24px;border-radius:4px;top:0}
-.timeline-bar.done{background:#2d3e47}
-.timeline-bar.progress{background:#4a5c6a}
-.timeline-bar.planned{background:#5a6c7a}
-.timeline-milestone{position:absolute;width:2px;height:100%;background:var(--blue);top:0;z-index:10}
-.timeline-milestone::before{content:attr(data-label);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--blue);white-space:nowrap;font-weight:600}
 /* Stats */
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .stat-box{text-align:center;background:var(--card2);border-radius:10px;padding:16px 10px}
@@ -99,7 +83,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   .header{flex-direction:column;align-items:flex-start;gap:10px}
   .header .clock{text-align:left}
   .stat-grid{grid-template-columns:repeat(3,1fr)}
-  .timeline{overflow-x:auto}
 }
 </style>
 </head>
@@ -133,188 +116,79 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <div class="grid">
-  <!-- GEO Timeline (Full Width) -->
+  <!-- GEO Project Tasks (Full Width) -->
   <div class="card full">
-    <div class="card-title"><span class="icon">📅</span> GEO 프로젝트 타임라인 (2/6~2/18)</div>
+    <div class="card-title"><span class="icon">📅</span> GEO 프로젝트 타임라인</div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <div style="font-size:13px;color:var(--dim)">
-        <span style="color:var(--text);font-weight:600">Before GEO Report 전달</span> — D+9/12 진행 중
-      </div>
-      <div style="font-size:11px;color:var(--dim)">
-        <span style="display:inline-block;width:12px;height:12px;background:#2d3e47;border-radius:2px;margin-right:4px"></span>완료
-        <span style="display:inline-block;width:12px;height:12px;background:#4a5c6a;border-radius:2px;margin:0 4px 0 12px"></span>진행
-        <span style="display:inline-block;width:12px;height:12px;background:#5a6c7a;border-radius:2px;margin:0 4px 0 12px"></span>예정
+        <span style="color:var(--text);font-weight:600">Before GEO Report 전달</span> — 2/6(목) ~ 2/18(화), D+9/12 진행 중
       </div>
     </div>
-    <div class="timeline">
-      <div class="timeline-dates">
-        <div class="timeline-date">D+0<br>2/6</div>
-        <div class="timeline-date">D+1<br>2/7</div>
-        <div class="timeline-date">D+2<br>2/8</div>
-        <div class="timeline-date">D+3<br>2/9</div>
-        <div class="timeline-date">D+4<br>2/10</div>
-        <div class="timeline-date">D+5<br>2/11</div>
-        <div class="timeline-date">D+6<br>2/12</div>
-        <div class="timeline-date">D+7<br>2/13</div>
-        <div class="timeline-date">D+8<br>2/14</div>
-        <div class="timeline-date today">D+9<br>2/15</div>
-        <div class="timeline-date">D+10<br>2/16</div>
-        <div class="timeline-date">D+11<br>2/17</div>
-        <div class="timeline-date">D+12<br>2/18</div>
-      </div>
-      <div class="timeline-track">
-        <div class="timeline-label">데이터 수집 환경 구축</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar done" style="left:0%;width:38.5%"></div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px">
+      <div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:18px;height:18px;background:var(--green);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">데이터 수집 환경 구축</div>
+            <div style="font-size:11px;color:var(--dim)">2/6 ~ 2/10 (D+0 ~ D+4) • 완료</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:18px;height:18px;background:var(--green);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">GEO 사전 리포트 세팅</div>
+            <div style="font-size:11px;color:var(--dim)">2/9 ~ 2/11 (D+3 ~ D+5) • 완료</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:18px;height:18px;background:var(--green);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">핵심 프롬프트 5개 발굴</div>
+            <div style="font-size:11px;color:var(--dim)">2/10 ~ 2/11 (D+4 ~ D+5) • 완료</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:18px;height:18px;background:var(--yellow);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">지식 하우스 데이터 수집</div>
+            <div style="font-size:11px;color:var(--dim)">2/10 ~ 2/13 (D+4 ~ D+7) • 진행 중</div>
+          </div>
         </div>
       </div>
-      <div class="timeline-track">
-        <div class="timeline-label">GEO 사전 리포트 세팅</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar done" style="left:23%;width:23%"></div>
+      <div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">BIM 구조 설계/모델링</div>
+            <div style="font-size:11px;color:var(--dim)">2/11 ~ 2/14 (D+5 ~ D+8) • 예정</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">프롬프트 세팅</div>
+            <div style="font-size:11px;color:var(--dim)">2/14 ~ 2/17 (D+8 ~ D+11) • 예정</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+          <div style="width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">콘텐츠 세팅 & 1차 배포</div>
+            <div style="font-size:11px;color:var(--dim)">2/15 ~ 2/17 (D+9 ~ D+11) • 예정</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0">
+          <div style="width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px"></div>
+          <div style="flex:1">
+            <div style="font-size:13px;font-weight:600;margin-bottom:4px">콘텐츠 최적화</div>
+            <div style="font-size:11px;color:var(--dim)">2/17 ~ 2/18 (D+11 ~ D+13) • 예정</div>
+          </div>
         </div>
       </div>
-      <div class="timeline-track">
-        <div class="timeline-label">핵심 프롬프트 5개 발굴</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar done" style="left:30.8%;width:15.4%"></div>
-        </div>
-      </div>
-      <div class="timeline-track">
-        <div class="timeline-label">지식 하우스 데이터 수집</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar progress" style="left:30.8%;width:23%"></div>
-        </div>
-      </div>
-      <div class="timeline-track">
-        <div class="timeline-label">BIM 구조 설계/모델링</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar planned" style="left:38.5%;width:30.8%"></div>
-        </div>
-      </div>
-      <div class="timeline-track">
-        <div class="timeline-label">프롬프트 세팅</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar planned" style="left:61.5%;width:30.8%"></div>
-        </div>
-      </div>
-      <div class="timeline-track">
-        <div class="timeline-label">콘텐츠 세팅 & 1차 배포</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar planned" style="left:69.2%;width:23%"></div>
-        </div>
-      </div>
-      <div class="timeline-track">
-        <div class="timeline-label">콘텐츠 최적화</div>
-        <div class="timeline-bars">
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar-cell"></div>
-          <div class="timeline-bar planned" style="left:84.6%;width:15.4%"></div>
-          <div class="timeline-milestone" style="left:100%" data-label="Before GEO Report 전달"></div>
-        </div>
-      </div>
+    </div>
+    <div style="margin-top:20px;padding:16px;background:var(--card2);border-radius:10px;border-left:4px solid var(--blue)">
+      <div style="font-size:13px;font-weight:600;color:var(--blue);margin-bottom:4px">🎯 Milestone: Before GEO Report 전달</div>
+      <div style="font-size:12px;color:var(--dim)">2/18(화) 최종 마감</div>
     </div>
   </div>
 
