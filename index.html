@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mark <> Mark3</title>
 <link href="https://cdn.jsdelivr.net/npm/daisyui@4.6.0/dist/full.min.css" rel="stylesheet" type="text/css" />
 <script src="https://cdn.tailwindcss.com"></script>
@@ -15,13 +15,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .header .left .subtitle{color:var(--dim);font-size:12px}
 .header .clock{color:var(--dim);font-size:12px;text-align:right}
 .header .clock .time{font-size:20px;color:var(--text);font-weight:600;display:block;margin-bottom:2px}
-/* Quick Links Top Section */
+/* Quick Links */
 .quick-links-top{max-width:1400px;margin:0 auto 24px;padding:18px 20px;background:var(--card);border:1px solid var(--border);border-radius:14px;margin-top:-10px}
 .quick-links-top .title{font-size:13px;font-weight:600;color:var(--dim);margin-bottom:14px;display:flex;align-items:center;gap:6px}
 .quick-links-grid{display:flex;flex-wrap:wrap;gap:10px}
 .quick-link-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;background:var(--card2);border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text);font-size:13px;font-weight:500;transition:all .15s}
 .quick-link-btn:hover{background:#2a2e3d;border-color:var(--accent2);transform:translateY(-1px)}
 .quick-link-btn .emoji{font-size:16px}
+/* Grid */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:16px;max-width:1400px;margin:0 auto}
 .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;transition:transform .15s}
 .card:hover{transform:translateY(-2px)}
@@ -34,27 +35,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .badge-red{background:rgba(225,112,85,.15);color:var(--red)}
 .badge-blue{background:rgba(116,185,255,.15);color:var(--blue)}
 .badge-purple{background:rgba(162,155,254,.15);color:var(--accent2)}
-/* Projects */
-.project{background:var(--card2);border-radius:10px;padding:14px;margin-bottom:10px}
-.project:last-child{margin-bottom:0}
-.project .name{font-weight:600;font-size:14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
-.project .desc{color:var(--dim);font-size:12px;line-height:1.5}
-.progress-bar{height:6px;background:#2a2e3d;border-radius:3px;margin-top:8px;overflow:hidden}
-.progress-bar .fill{height:100%;border-radius:3px;transition:width .5s}
-/* Integration */
-.int-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
-.int-row:last-child{border:none}
-.int-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.int-dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
-.int-label{flex:1;font-size:13px}
-.int-detail{color:var(--dim);font-size:11px}
-/* Automation */
-.auto-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
-.auto-item:last-child{border:none}
-.auto-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-.auto-time{color:var(--accent2);font-weight:600;white-space:nowrap;min-width:90px}
-.auto-desc{color:var(--dim);line-height:1.4}
-.auto-desc strong{color:var(--text)}
+/* Timeline Chart */
+.timeline{position:relative;padding-top:40px}
+.timeline-header{display:flex;gap:150px;margin-bottom:16px;padding-left:200px;font-size:11px;color:var(--dim);font-weight:600}
+.timeline-dates{display:flex;gap:0;position:absolute;top:0;left:200px;right:0}
+.timeline-date{flex:1;text-align:center;font-size:10px;color:var(--dim);padding:4px 0;border-left:1px solid var(--border)}
+.timeline-date.today{color:var(--accent2);font-weight:700;background:rgba(162,155,254,.1)}
+.timeline-track{display:flex;align-items:center;margin-bottom:8px;min-height:32px}
+.timeline-label{width:190px;font-size:12px;color:var(--text);flex-shrink:0;padding-right:10px}
+.timeline-bars{flex:1;display:flex;gap:0;position:relative}
+.timeline-bar-cell{flex:1;height:24px;border-left:1px solid var(--border)}
+.timeline-bar{position:absolute;height:24px;border-radius:4px;top:0}
+.timeline-bar.done{background:#2d3e47}
+.timeline-bar.progress{background:#4a5c6a}
+.timeline-bar.planned{background:#5a6c7a}
+.timeline-milestone{position:absolute;width:2px;height:100%;background:var(--blue);top:0;z-index:10}
+.timeline-milestone::before{content:attr(data-label);position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:10px;color:var(--blue);white-space:nowrap;font-weight:600}
 /* Stats */
 .stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
 .stat-box{text-align:center;background:var(--card2);border-radius:10px;padding:16px 10px}
@@ -64,25 +60,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .stat-bar-label{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;color:var(--dim)}
 .stat-bar{height:20px;background:var(--card2);border-radius:6px;display:flex;overflow:hidden;gap:2px}
 .stat-bar div{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
-/* Links */
-.link-list a{display:flex;align-items:center;gap:10px;padding:12px 14px;background:var(--card2);border-radius:10px;margin-bottom:8px;text-decoration:none;color:var(--text);font-size:13px;transition:background .15s}
-.link-list a:last-child{margin-bottom:0}
-.link-list a:hover{background:#2a2e3d}
-.link-list .arrow{margin-left:auto;color:var(--dim)}
-/* Activity */
+/* Other styles */
+.project{background:var(--card2);border-radius:10px;padding:14px;margin-bottom:10px}
+.project:last-child{margin-bottom:0}
+.project .name{font-weight:600;font-size:14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+.project .desc{color:var(--dim);font-size:12px;line-height:1.5}
+.progress-bar{height:6px;background:#2a2e3d;border-radius:3px;margin-top:8px;overflow:hidden}
+.progress-bar .fill{height:100%;border-radius:3px;transition:width .5s}
+.int-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)}
+.int-row:last-child{border:none}
+.int-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.int-dot.on{background:var(--green);box-shadow:0 0 8px var(--green)}
+.int-label{flex:1;font-size:13px}
+.int-detail{color:var(--dim);font-size:11px}
+.auto-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
+.auto-item:last-child{border:none}
+.auto-icon{font-size:16px;flex-shrink:0;margin-top:1px}
+.auto-time{color:var(--accent2);font-weight:600;white-space:nowrap;min-width:90px}
+.auto-desc{color:var(--dim);line-height:1.4}
+.auto-desc strong{color:var(--text)}
 .activity-item{display:flex;gap:10px;padding:8px 0;font-size:12px;border-bottom:1px solid var(--border)}
 .activity-item:last-child{border:none}
 .activity-time{color:var(--dim);min-width:50px;flex-shrink:0}
 .activity-dot{width:6px;height:6px;border-radius:50%;margin-top:5px;flex-shrink:0}
-/* Urgent */
-.urgent-banner{background:linear-gradient(135deg,rgba(225,112,85,.12),rgba(253,203,110,.08));border:1px solid rgba(225,112,85,.3);border-radius:12px;padding:16px;display:flex;align-items:center;gap:14px;margin-bottom:16px}
-.urgent-banner .icon{font-size:28px}
-.urgent-banner .info{flex:1}
-.urgent-banner .title{font-weight:600;font-size:14px;color:var(--red)}
-.urgent-banner .detail{font-size:12px;color:var(--dim);margin-top:4px}
-.urgent-banner .countdown{font-size:22px;font-weight:700;color:var(--yellow);text-align:right}
-.urgent-banner .countdown small{display:block;font-size:10px;font-weight:400;color:var(--dim)}
-/* GEO Stats */
 .geo-metric{background:var(--card2);border-radius:10px;padding:14px;margin-bottom:10px}
 .geo-metric:last-child{margin-bottom:0}
 .geo-metric .label{font-size:11px;color:var(--dim);margin-bottom:4px}
@@ -93,19 +93,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .competitor-rank{min-width:20px;text-align:center;font-weight:700;color:var(--accent2)}
 .competitor-name{flex:1}
 .competitor-count{color:var(--dim)}
-/* TODO List */
-.todo-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px}
-.todo-item:last-child{border:none}
-.todo-check{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;margin-top:2px}
-.todo-check.done{background:var(--green);border-color:var(--green)}
-.todo-text{flex:1;line-height:1.5}
-.todo-text.done{color:var(--dim);text-decoration:line-through}
 @media(max-width:600px){
   body{padding:12px}
   .grid{grid-template-columns:1fr}
   .header{flex-direction:column;align-items:flex-start;gap:10px}
   .header .clock{text-align:left}
   .stat-grid{grid-template-columns:repeat(3,1fr)}
+  .timeline{overflow-x:auto}
 }
 </style>
 </head>
@@ -139,25 +133,188 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </div>
 
 <div class="grid">
-  <!-- Projects -->
-  <div class="card">
-    <div class="card-title"><span class="icon">📋</span> 프로젝트 현황</div>
-    <div class="project" style="cursor:pointer">
-      <div class="name">미리캔버스 Before GEO Report <span class="badge badge-yellow">진행 중</span></div>
-      <div class="desc">✅ Semrush 데이터 완료 (US/JP/BR). 🔄 Prompt Architect 분석 중. 다음: GEO 데이터 통합 & 리포트 작성</div>
-      <div class="progress-bar"><div class="fill" style="width:60%;background:linear-gradient(90deg,var(--accent),var(--pink))"></div></div>
+  <!-- GEO Timeline (Full Width) -->
+  <div class="card full">
+    <div class="card-title"><span class="icon">📅</span> GEO 프로젝트 타임라인 (2/6~2/18)</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <div style="font-size:13px;color:var(--dim)">
+        <span style="color:var(--text);font-weight:600">Before GEO Report 전달</span> — D+9/12 진행 중
+      </div>
+      <div style="font-size:11px;color:var(--dim)">
+        <span style="display:inline-block;width:12px;height:12px;background:#2d3e47;border-radius:2px;margin-right:4px"></span>완료
+        <span style="display:inline-block;width:12px;height:12px;background:#4a5c6a;border-radius:2px;margin:0 4px 0 12px"></span>진행
+        <span style="display:inline-block;width:12px;height:12px;background:#5a6c7a;border-radius:2px;margin:0 4px 0 12px"></span>예정
+      </div>
     </div>
-    <div class="project">
-      <div class="name">BIM Project <span class="badge badge-purple">Placeholder</span></div>
-      <div class="desc">Building Information Modeling 관련 프로젝트</div>
-    </div>
-    <div class="project">
-      <div class="name">PAM <span class="badge badge-purple">Placeholder</span></div>
-      <div class="desc">Privileged Access Management</div>
-    </div>
-    <div class="project">
-      <div class="name">콘달 / PASO <span class="badge badge-purple">Placeholder</span></div>
-      <div class="desc">기타 Claude Projects</div>
+    <div class="timeline">
+      <div class="timeline-dates">
+        <div class="timeline-date">D+0<br>2/6</div>
+        <div class="timeline-date">D+1<br>2/7</div>
+        <div class="timeline-date">D+2<br>2/8</div>
+        <div class="timeline-date">D+3<br>2/9</div>
+        <div class="timeline-date">D+4<br>2/10</div>
+        <div class="timeline-date">D+5<br>2/11</div>
+        <div class="timeline-date">D+6<br>2/12</div>
+        <div class="timeline-date">D+7<br>2/13</div>
+        <div class="timeline-date">D+8<br>2/14</div>
+        <div class="timeline-date today">D+9<br>2/15</div>
+        <div class="timeline-date">D+10<br>2/16</div>
+        <div class="timeline-date">D+11<br>2/17</div>
+        <div class="timeline-date">D+12<br>2/18</div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">데이터 수집 환경 구축</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar done" style="left:0%;width:38.5%"></div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">GEO 사전 리포트 세팅</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar done" style="left:23%;width:23%"></div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">핵심 프롬프트 5개 발굴</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar done" style="left:30.8%;width:15.4%"></div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">지식 하우스 데이터 수집</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar progress" style="left:30.8%;width:23%"></div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">BIM 구조 설계/모델링</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar planned" style="left:38.5%;width:30.8%"></div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">프롬프트 세팅</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar planned" style="left:61.5%;width:30.8%"></div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">콘텐츠 세팅 & 1차 배포</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar planned" style="left:69.2%;width:23%"></div>
+        </div>
+      </div>
+      <div class="timeline-track">
+        <div class="timeline-label">콘텐츠 최적화</div>
+        <div class="timeline-bars">
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar-cell"></div>
+          <div class="timeline-bar planned" style="left:84.6%;width:15.4%"></div>
+          <div class="timeline-milestone" style="left:100%" data-label="Before GEO Report 전달"></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -201,30 +358,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     </div>
     <div style="margin-top:18px">
       <div class="card-title" style="font-size:13px"><span class="icon">⚡</span> 최근 활동</div>
-      <div class="activity-item"><span class="activity-time">18:55</span><span class="activity-dot" style="background:var(--accent2)"></span>Prompt Architect 분석 완료</div>
+      <div class="activity-item"><span class="activity-time">20:45</span><span class="activity-dot" style="background:var(--green)"></span>nick.oh 계정 삭제 완료</div>
+      <div class="activity-item"><span class="activity-time">18:55</span><span class="activity-dot" style="background:var(--accent2)"></span>Prompt Architect 분석</div>
       <div class="activity-item"><span class="activity-time">18:34</span><span class="activity-dot" style="background:var(--green)"></span>Brave Search API 설정</div>
-      <div class="activity-item"><span class="activity-time">17:05</span><span class="activity-dot" style="background:var(--blue)"></span>bizhows 3개국 데이터 수집</div>
       <div class="activity-item"><span class="activity-time">14:51</span><span class="activity-dot" style="background:var(--yellow)"></span>Semrush 데이터 완료</div>
     </div>
-  </div>
-
-  <!-- Before GEO Report 상세 -->
-  <div class="card">
-    <div class="card-title"><span class="icon">📊</span> Before GEO Report 상세 진행</div>
-    <div style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <span style="font-size:13px;font-weight:600">전체 진행률</span>
-        <span style="font-size:13px;color:var(--accent2)">60%</span>
-      </div>
-      <div class="progress-bar"><div class="fill" style="width:60%;background:linear-gradient(90deg,var(--accent),var(--pink))"></div></div>
-    </div>
-    <div class="todo-item"><div class="todo-check done"></div><div class="todo-text done">Semrush 데이터 수집 (US/JP/BR × 2 도메인)</div></div>
-    <div class="todo-item"><div class="todo-check done"></div><div class="todo-text done">bizhows 3개국 분석 완료 (Traffic, Backlinks)</div></div>
-    <div class="todo-item"><div class="todo-check done"></div><div class="todo-text done">Prompt Selection Report 수령 (12→5 prompts)</div></div>
-    <div class="todo-item"><div class="todo-check done"></div><div class="todo-text done">Prompt Architect 초기 분석 (Brand Visibility 12.3%)</div></div>
-    <div class="todo-item"><div class="todo-check"></div><div class="todo-text">나머지 프롬프트 분석 (P-01, P-03, P-07, P-08)</div></div>
-    <div class="todo-item"><div class="todo-check"></div><div class="todo-text">GEO 데이터 통합 (내부 서비스 대기)</div></div>
-    <div class="todo-item"><div class="todo-check"></div><div class="todo-text">Report 작성 (Executive Summary, Recommendations)</div></div>
   </div>
 
   <!-- Integrations -->
