@@ -1234,6 +1234,106 @@ body::before {
   padding: var(--spacing-xl);
 }
 
+/* Model Selector Dropdown */
+.model-selector-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: var(--spacing-md);
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.model-selector-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.model-selector {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  transition: var(--transition);
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238B8BA3' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 28px;
+}
+
+.model-selector:hover {
+  border-color: var(--accent);
+}
+
+.model-selector:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-subtle);
+}
+
+.model-selector option {
+  background: #0a0a10;
+  color: var(--text-primary);
+  padding: 8px;
+}
+
+/* Toast Notifications */
+.toast-container {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  padding: 12px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  color: white;
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-subtle);
+  animation: slideInRight 0.3s ease forwards;
+  max-width: 360px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+}
+
+.toast.success {
+  background: rgba(16, 185, 129, 0.9);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.toast.error {
+  background: rgba(239, 68, 68, 0.9);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.toast.fadeOut {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; transform: translateX(100%); }
+}
+
 .decisions-header {
   display: flex;
   align-items: center;
@@ -1709,6 +1809,9 @@ body::before {
   </div>
 
 </main>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- ============================================
      DETAIL PANEL (Slide-out)
@@ -2410,9 +2513,79 @@ notesArea.addEventListener('input', () => {
    ============================================ */
 let currentAgent = null;
 
+const MODEL_OPTIONS = [
+  { value: 'anthropic/claude-opus-4-6', label: 'Opus (claude-opus-4-6)' },
+  { value: 'anthropic/claude-sonnet-4-5', label: 'Sonnet (claude-sonnet-4-5)' }
+];
+
+function showToast(message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => { toast.classList.add('fadeOut'); setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+function getAuthToken() {
+  let token = localStorage.getItem('openclaw_auth_token');
+  if (!token) {
+    token = prompt('Enter OpenClaw Gateway auth token:');
+    if (token) localStorage.setItem('openclaw_auth_token', token);
+  }
+  return token;
+}
+
+async function changeAgentModel(agentId, newModel) {
+  const token = getAuthToken();
+  if (!token) { showToast('Auth token required', 'error'); return false; }
+
+  try {
+    const res = await fetch('http://localhost:18789/api/config/patch', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        patch: [{
+          op: 'replace',
+          path: `/agents/list/${agentId}/model`,
+          value: newModel
+        }]
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`${res.status}: ${err}`);
+    }
+
+    // Update local state
+    const agent = agents.find(a => a.id === agentId);
+    if (agent) {
+      const shortModel = newModel.replace('anthropic/', '');
+      agent.model = shortModel;
+      saveState(STATE_KEYS.agents, agents);
+    }
+
+    showToast(`✅ ${agentId} → ${newModel.replace('anthropic/', '')}`, 'success');
+    return true;
+  } catch (e) {
+    showToast(`❌ Model change failed: ${e.message}`, 'error');
+    return false;
+  }
+}
+
 function renderAgents() {
   const grid = document.getElementById('agentsGrid');
-  grid.innerHTML = agents.map((agent, i) => `
+  grid.innerHTML = agents.map((agent, i) => {
+    const currentFullModel = agent.model.startsWith('anthropic/') ? agent.model : `anthropic/${agent.model}`;
+    const optionsHtml = MODEL_OPTIONS.map(m =>
+      `<option value="${m.value}" ${m.value === currentFullModel ? 'selected' : ''}>${m.label}</option>`
+    ).join('');
+
+    return `
     <div class="agent-card animate-in" onclick="showAgentDetail('${agent.id}')">
       <div class="agent-card-header">
         <div class="agent-info">
@@ -2428,14 +2601,39 @@ function renderAgents() {
         </div>
       </div>
       <div class="agent-desc">${agent.desc}</div>
+      <div class="model-selector-wrap" onclick="event.stopPropagation()">
+        <span class="model-selector-label">🤖 Model</span>
+        <select class="model-selector" data-agent-id="${agent.id}" onchange="handleModelChange(this)">
+          ${optionsHtml}
+        </select>
+      </div>
       <div class="agent-meta">
-        <span>Model: ${agent.model}</span>
         <span>Last active: ${agent.activity.length > 0 ? timeAgo(new Date(agent.activity[0].time)) : 'Never'}</span>
       </div>
       <button class="agent-send-task" onclick="event.stopPropagation(); showSendTaskModal('${agent.id}')">📤 Send Task</button>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
+
+window.handleModelChange = async function(selectEl) {
+  const agentId = selectEl.dataset.agentId;
+  const newModel = selectEl.value;
+  const prevValue = selectEl.dataset.prevValue || selectEl.value;
+  selectEl.dataset.prevValue = newModel;
+  
+  selectEl.disabled = true;
+  const success = await changeAgentModel(agentId, newModel);
+  selectEl.disabled = false;
+  
+  if (!success) {
+    // Revert
+    const agent = agents.find(a => a.id === agentId);
+    if (agent) {
+      const fullModel = agent.model.startsWith('anthropic/') ? agent.model : `anthropic/${agent.model}`;
+      selectEl.value = fullModel;
+    }
+  }
+};
 
 function showAgentDetail(agentId) {
   const agent = agents.find(a => a.id === agentId);
