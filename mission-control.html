@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mission Control — Mark</title>
+<title>M3 Mark 3</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================
@@ -103,6 +103,11 @@ body::before {
 @keyframes slideIn {
   from { opacity: 0; transform: translateX(-10px); }
   to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
 }
 
 .animate-in {
@@ -923,6 +928,374 @@ body::before {
 .notes-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-subtle); }
 
 /* ============================================
+   COMMAND CENTER TAB
+   ============================================ */
+/* Agent Cards Grid */
+.agents-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.agent-card {
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  transition: var(--transition);
+  cursor: pointer;
+  position: relative;
+}
+
+.agent-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+.agent-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.agent-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.agent-emoji {
+  font-size: 32px;
+}
+
+.agent-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.agent-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.agent-role {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.agent-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agent-status-dot.online {
+  background: var(--success);
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+}
+
+.agent-status-dot.busy {
+  background: var(--warning);
+}
+
+.agent-status-dot.offline {
+  background: var(--text-muted);
+}
+
+.agent-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.5;
+}
+
+.agent-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-md);
+  padding-top: var(--spacing-sm);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.agent-send-task {
+  width: 100%;
+  padding: 10px;
+  background: var(--accent-subtle);
+  color: var(--accent-light);
+  border: 1px solid rgba(79, 70, 229, 0.2);
+  border-radius: var(--radius-sm);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.agent-send-task:hover {
+  background: var(--accent);
+  color: white;
+}
+
+/* Slide-out Detail Panel */
+.detail-panel {
+  position: fixed;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  width: 500px;
+  max-width: 90vw;
+  background: var(--bg-glass);
+  backdrop-filter: blur(var(--blur));
+  border-left: 1px solid var(--border-subtle);
+  z-index: 150;
+  transform: translateX(100%);
+  transition: transform var(--transition);
+  overflow-y: auto;
+  padding: var(--spacing-2xl);
+}
+
+.detail-panel.active {
+  transform: translateX(0);
+}
+
+.detail-panel-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 149;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.detail-panel-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.detail-panel-close {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  transition: var(--transition);
+}
+
+.detail-panel-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.detail-panel-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.detail-panel-emoji {
+  font-size: 40px;
+}
+
+.detail-panel-title {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.detail-panel-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.detail-section {
+  margin-bottom: var(--spacing-xl);
+}
+
+.detail-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--spacing-sm);
+}
+
+.detail-section-content {
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+
+.capabilities-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  list-style: none;
+}
+
+.capabilities-list li {
+  font-size: 13px;
+  color: var(--text-primary);
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--accent);
+}
+
+.activity-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.activity-log-item {
+  padding: var(--spacing-sm);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+  border-left: 2px solid var(--success);
+}
+
+.activity-log-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.activity-log-text {
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.activity-log-empty {
+  text-align: center;
+  padding: var(--spacing-xl);
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.performance-notes {
+  width: 100%;
+  min-height: 120px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: var(--transition);
+}
+
+.performance-notes::placeholder { color: var(--text-muted); }
+.performance-notes:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-subtle); }
+
+/* Executive Decisions Section */
+.decisions-section {
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+}
+
+.decisions-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-lg);
+}
+
+.decisions-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.decision-item {
+  padding: var(--spacing-md);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.decision-item:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border-hover);
+}
+
+.decision-date {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent-light);
+  margin-bottom: 4px;
+}
+
+.decision-question {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.decision-summary {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.decision-agents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.agent-badge {
+  font-size: 11px;
+  padding: 4px 10px;
+  background: var(--accent-subtle);
+  color: var(--accent-light);
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ============================================
    MODAL
    ============================================ */
 .modal-overlay {
@@ -1049,9 +1422,44 @@ body::before {
 /* ============================================
    RESPONSIVE
    ============================================ */
+/* ============================================
+   QUICK LINKS
+   ============================================ */
+.quick-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: var(--spacing-xl);
+}
+
+.quick-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--bg-card);
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.quick-link:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
 @media (max-width: 1200px) {
   .metrics-grid { grid-template-columns: repeat(2, 1fr); }
   .kanban { grid-template-columns: 1fr; }
+  .agents-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -1065,6 +1473,7 @@ body::before {
   .live-time { text-align: left; }
   .search-box input { width: 140px; }
   .search-box input:focus { width: 180px; }
+  .detail-panel { width: 100%; }
 }
 </style>
 </head>
@@ -1075,9 +1484,9 @@ body::before {
      ============================================ -->
 <header class="header">
   <div class="header-left">
-    <div class="logo">M</div>
+    <div class="logo">M3</div>
     <div>
-      <div class="header-title">Mission Control</div>
+      <div class="header-title">M3 Mark 3</div>
       <div class="header-subtitle">Prompt Architect</div>
     </div>
   </div>
@@ -1087,6 +1496,8 @@ body::before {
     <button class="tab-btn" data-tab="projects">📋 Projects</button>
     <button class="tab-btn" data-tab="timeline">📅 Timeline</button>
     <button class="tab-btn" data-tab="notes">📝 Notes</button>
+    <button class="tab-btn" data-tab="revenue">💰 Revenue</button>
+    <button class="tab-btn" data-tab="command">🏢 Command Center</button>
   </nav>
 
   <div class="header-right">
@@ -1116,6 +1527,20 @@ body::before {
         <div class="time" id="liveTime"></div>
         <div id="liveDate"></div>
       </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="quick-links animate-in">
+      <a href="https://promptarchitect.app/wp-admin" target="_blank" class="quick-link">🌐 WP 관리자</a>
+      <a href="https://nordvpn.com" target="_blank" class="quick-link">🔒 NordVPN</a>
+      <a href="https://search.google.com/search-console" target="_blank" class="quick-link">📈 Google Search Console</a>
+      <a href="https://github.com/makim-414" target="_blank" class="quick-link">🐙 GitHub</a>
+      <a href="https://pasocorp.com" target="_blank" class="quick-link">🏢 PASO Corp</a>
+      <a href="https://pasogallery.com" target="_blank" class="quick-link">🎨 PASO Gallery</a>
+      <a href="https://claude.ai" target="_blank" class="quick-link">🤖 Claude</a>
+      <a href="https://web.telegram.org" target="_blank" class="quick-link">💬 Telegram</a>
+      <a href="https://workspace.google.com" target="_blank" class="quick-link">📧 Google Workspace</a>
+      <a href="https://motion.so" target="_blank" class="quick-link">⚡ Motion</a>
     </div>
 
     <!-- Metric Cards -->
@@ -1245,7 +1670,54 @@ body::before {
     </div>
   </div>
 
+  <!-- ========== REVENUE TAB (Placeholder) ========== -->
+  <div class="tab-content" id="tab-revenue">
+    <div class="welcome-bar animate-in">
+      <div class="welcome-text">
+        <h1>💰 Revenue</h1>
+        <p>Revenue tracking and forecasting</p>
+      </div>
+    </div>
+    <div class="card animate-in">
+      <div class="card-header">
+        <div class="card-title">💰 Revenue Dashboard</div>
+      </div>
+      <p style="color: var(--text-secondary); font-size: 13px;">Revenue tab content (managed by revenue-tab sub-agent)</p>
+    </div>
+  </div>
+
+  <!-- ========== COMMAND CENTER TAB ========== -->
+  <div class="tab-content" id="tab-command">
+    <div class="welcome-bar animate-in">
+      <div class="welcome-text">
+        <h1>🏢 Command Center</h1>
+        <p>Multi-agent team coordination and executive decisions</p>
+      </div>
+    </div>
+
+    <!-- Agent Cards Grid -->
+    <div class="agents-grid" id="agentsGrid"></div>
+
+    <!-- Executive Decisions Section -->
+    <div class="decisions-section animate-in">
+      <div class="decisions-header">
+        <div class="card-title">🧠 Executive Decisions</div>
+        <button class="card-action" id="addDecisionBtn">+ Add Decision</button>
+      </div>
+      <div class="decisions-list" id="decisionsList"></div>
+    </div>
+  </div>
+
 </main>
+
+<!-- ============================================
+     DETAIL PANEL (Slide-out)
+     ============================================ -->
+<div class="detail-panel-overlay" id="detailOverlay"></div>
+<div class="detail-panel" id="detailPanel">
+  <button class="detail-panel-close" id="detailClose">✕</button>
+  <div id="detailContent"></div>
+</div>
 
 <!-- ============================================
      MODAL
@@ -1275,7 +1747,9 @@ const STATE_KEYS = {
   notes: 'mc_notes',
   metrics: 'mc_metrics',
   milestones: 'mc_milestones',
-  activeTab: 'mc_activeTab'
+  activeTab: 'mc_activeTab',
+  agents: 'mc_agents',
+  decisions: 'mc_decisions'
 };
 
 function loadState(key, fallback) {
@@ -1351,9 +1825,8 @@ const TIMELINE_PHASES = [
 ];
 
 /* ============================================
-   APP INITIALIZATION
+   DEFAULT DATA
    ============================================ */
-// Default data — used only on first load (localStorage empty)
 const DEFAULT_ACTIVITIES = [
   { text: '🖥️ Mission Control v3 배포 (실제 데이터 반영)', color: 'green', time: new Date().toISOString() },
   { text: '🧠 모든 세션 Opus 모델로 전환 (→ 2/25 15:00)', color: 'purple', time: '2026-02-24T12:30:00+09:00' },
@@ -1416,16 +1889,185 @@ const DEFAULT_TASKS = {
 };
 
 const DEFAULT_METRICS = { mrr: 0, saas: 70 };
-
 const DEFAULT_MILESTONES = { m1: true, m2: true, m3: true, m4: true, m5: true };
 
+const DEFAULT_AGENTS = [
+  {
+    id: 'marketer',
+    name: '마케터',
+    emoji: '🎯',
+    role: 'Marketer',
+    model: 'claude-sonnet-4-5',
+    status: 'online',
+    desc: 'SEO/GEO 전략, Paid 캠페인, 콘텐츠 마케팅',
+    capabilities: [
+      'SEO/GEO Analysis',
+      'Paid Campaign Management',
+      'Content Strategy',
+      'Lead Generation',
+      'Competitor Research',
+      'Email Campaigns'
+    ],
+    activity: [],
+    notes: ''
+  },
+  {
+    id: 'sales',
+    name: '세일즈',
+    emoji: '💼',
+    role: 'Sales',
+    model: 'claude-sonnet-4-5',
+    status: 'online',
+    desc: '리드 관리, 이메일 아웃리치, 계약 클로징, BD',
+    capabilities: [
+      'Lead Management',
+      'Email Outreach',
+      'Contract Negotiation',
+      'Business Development',
+      'Pipeline Management',
+      'CRM Automation'
+    ],
+    activity: [],
+    notes: ''
+  },
+  {
+    id: 'strategy',
+    name: '전략',
+    emoji: '🧠',
+    role: 'Strategy',
+    model: 'claude-sonnet-4-5',
+    status: 'online',
+    desc: 'GTM 전략, 포지셔닝, ICP 정의, 프라이싱',
+    capabilities: [
+      'Go-To-Market Strategy',
+      'Positioning & Messaging',
+      'ICP Definition',
+      'Pricing Strategy',
+      'Market Analysis',
+      'Competitive Intelligence'
+    ],
+    activity: [],
+    notes: ''
+  },
+  {
+    id: 'analyst',
+    name: '애널',
+    emoji: '📊',
+    role: 'Analyst',
+    model: 'claude-sonnet-4-5',
+    status: 'online',
+    desc: '데이터 분석, 리포트 생성, KPI 추적',
+    capabilities: [
+      'Data Analysis',
+      'Report Generation',
+      'KPI Tracking',
+      'Business Metrics (MRR, CAC, LTV)',
+      'SQL Queries',
+      'Dashboard Creation'
+    ],
+    activity: [],
+    notes: ''
+  },
+  {
+    id: 'dev',
+    name: '개발자',
+    emoji: '💻',
+    role: 'Developer',
+    model: 'claude-sonnet-4-5',
+    status: 'online',
+    desc: '풀스택 개발 — FE + BE + 인프라',
+    capabilities: [
+      'React/Next.js/TypeScript',
+      'Node.js/API Design',
+      'PostgreSQL/Supabase',
+      'Infrastructure/Docker/AWS',
+      'Vercel Deploy',
+      'Performance Optimization'
+    ],
+    activity: [],
+    notes: ''
+  }
+];
+
+const DEFAULT_DECISIONS = [
+  {
+    date: '2026-02-24',
+    question: 'Multi-agent team structure',
+    summary: 'Hub-Spoke + Blackboard pattern',
+    agents: ['마케터', '세일즈', '전략', '애널', '개발자']
+  },
+  {
+    date: '2026-02-23',
+    question: 'Email batch sending approach',
+    summary: 'Clay batch deploy approved',
+    agents: ['세일즈']
+  },
+  {
+    date: '2026-02-20',
+    question: 'GEO query API cost optimization',
+    summary: 'Switch Claude Sonnet to Haiku',
+    agents: ['애널']
+  }
+];
+
+const DEFAULT_NOTES = `# Mission Control Notes
+
+## 🎯 핵심 목표
+- MRR ₩20M by March 30
+- Product SaaS Ready
+- First Paying Customer → Scale
+
+## 🔥 계약 진행 중
+- Miricanvas GEO 서비스 계약 — ₩500만 (3개월 컨설팅)
+- 조지은 (jejo01@miridih.com) - Head of Marketing
+- NDA 서명 완료 (2/20), 계약서 진행 중
+
+## 📧 PA Sales Pipeline
+- 총 리드: 171개 (all-leads-merged.md)
+- 실발송: 17개 (Clay batch 1)
+- 미발송: Clay batch 2-4 (#148-171), Priority 1&2 나머지
+- 마스터 템플릿: pa-email-master-template.md
+- 서명: IRONACT, Inc / Prompt Architect / Mark Kim
+
+## 📊 검증된 통계 (이메일용)
+- 47% AI 구매 리서치 (Attest 2025)
+- 67% Gen Z AI 사용 (IAB UK 2025.09)
+- ChatGPT 800M WAU (Sam Altman Oct 2025)
+- McKinsey: ~50% consumers use AI search
+- $750B through AI search by 2028
+
+## 📌 주요 규칙
+- ❌ 숫자/팩트 추정 절대 금지
+- ❌ 이메일 발송 전 반드시 사용자 확인
+- ❌ 미션 범위 확대 해석 금지
+- ✅ 새 지시 → 기존 원칙 충돌 체크 먼저
+
+## 💡 메모
+- Claude Sonnet → Haiku: GEO 쿼리 월 $17.67 → $5.30
+- Answer Capsule: Citation Rate +72.4%
+- 브라질 Paid: 타겟 ROAS > 2.0, $500-1000
+- gog CLI: --from 플래그 사용 X (not verified 에러)
+
+## 🔗 중요 링크
+- Dashboard: https://makim-414.github.io/mission-control/
+- PA Admin: https://studio.promptarchitect.app/admin
+- Figma 소개서: https://www.figma.com/deck/SdDEUwIgQsq8OqLp1kCiEf
+`;
+
+/* ============================================
+   STATE INITIALIZATION
+   ============================================ */
 let activities = loadState(STATE_KEYS.activities, DEFAULT_ACTIVITIES);
 let priorities = loadState(STATE_KEYS.priorities, DEFAULT_PRIORITIES);
 let tasks = loadState(STATE_KEYS.tasks, DEFAULT_TASKS);
 let metrics = loadState(STATE_KEYS.metrics, DEFAULT_METRICS);
 let milestoneState = loadState(STATE_KEYS.milestones, DEFAULT_MILESTONES);
+let agents = loadState(STATE_KEYS.agents, DEFAULT_AGENTS);
+let decisions = loadState(STATE_KEYS.decisions, DEFAULT_DECISIONS);
 
-// Tab Navigation
+/* ============================================
+   TAB NAVIGATION
+   ============================================ */
 const tabBtns = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
 const savedTab = loadState(STATE_KEYS.activeTab, 'dashboard');
@@ -1502,7 +2144,7 @@ function updateMetrics() {
 
 // Click metric cards to edit
 document.querySelectorAll('.metric-card').forEach((card, i) => {
-  if (i < 2) { // Only MRR and SaaS are editable
+  if (i < 2) {
     card.style.cursor = 'pointer';
     card.addEventListener('click', () => {
       const field = i === 0 ? 'mrr' : 'saas';
@@ -1676,7 +2318,6 @@ document.getElementById('modalSave').addEventListener('click', () => {
   const newColumn = document.getElementById('taskColumn')?.value;
 
   if (editingTask.index !== null) {
-    // Edit existing
     const task = tasks[editingTask.column][editingTask.index];
     task.title = title;
     task.desc = desc;
@@ -1688,7 +2329,6 @@ document.getElementById('modalSave').addEventListener('click', () => {
       addActivity(`Moved "${title}" to ${newColumn}`, 'blue');
     }
   } else {
-    // New task
     tasks[editingTask.column].push({
       title, desc, priority,
       created: new Date().toISOString()
@@ -1756,49 +2396,6 @@ const notesArea = document.getElementById('notesArea');
 const charCount = document.getElementById('charCount');
 const lastSaved = document.getElementById('lastSaved');
 
-const DEFAULT_NOTES = `# Mission Control Notes
-
-## 🎯 핵심 목표
-- MRR ₩20M by March 30
-- Product SaaS Ready
-- First Paying Customer → Scale
-
-## 🔥 계약 진행 중
-- Miricanvas GEO 서비스 계약 — ₩500만 (3개월 컨설팅)
-- 조지은 (jejo01@miridih.com) - Head of Marketing
-- NDA 서명 완료 (2/20), 계약서 진행 중
-
-## 📧 PA Sales Pipeline
-- 총 리드: 171개 (all-leads-merged.md)
-- 실발송: 17개 (Clay batch 1)
-- 미발송: Clay batch 2-4 (#148-171), Priority 1&2 나머지
-- 마스터 템플릿: pa-email-master-template.md
-- 서명: IRONACT, Inc / Prompt Architect / Mark Kim
-
-## 📊 검증된 통계 (이메일용)
-- 47% AI 구매 리서치 (Attest 2025)
-- 67% Gen Z AI 사용 (IAB UK 2025.09)
-- ChatGPT 800M WAU (Sam Altman Oct 2025)
-- McKinsey: ~50% consumers use AI search
-- $750B through AI search by 2028
-
-## 📌 주요 규칙
-- ❌ 숫자/팩트 추정 절대 금지
-- ❌ 이메일 발송 전 반드시 사용자 확인
-- ❌ 미션 범위 확대 해석 금지
-- ✅ 새 지시 → 기존 원칙 충돌 체크 먼저
-
-## 💡 메모
-- Claude Sonnet → Haiku: GEO 쿼리 월 $17.67 → $5.30
-- Answer Capsule: Citation Rate +72.4%
-- 브라질 Paid: 타겟 ROAS > 2.0, $500-1000
-- gog CLI: --from 플래그 사용 X (not verified 에러)
-
-## 🔗 중요 링크
-- Dashboard: https://makim-414.github.io/mission-control/
-- PA Admin: https://studio.promptarchitect.app/admin
-- Figma 소개서: https://www.figma.com/deck/SdDEUwIgQsq8OqLp1kCiEf
-`;
 notesArea.value = loadState(STATE_KEYS.notes, DEFAULT_NOTES) || '';
 charCount.textContent = `${notesArea.value.length} characters`;
 
@@ -1809,10 +2406,283 @@ notesArea.addEventListener('input', () => {
 });
 
 /* ============================================
+   COMMAND CENTER — AGENTS
+   ============================================ */
+let currentAgent = null;
+
+function renderAgents() {
+  const grid = document.getElementById('agentsGrid');
+  grid.innerHTML = agents.map((agent, i) => `
+    <div class="agent-card animate-in" onclick="showAgentDetail('${agent.id}')">
+      <div class="agent-card-header">
+        <div class="agent-info">
+          <div class="agent-emoji">${agent.emoji}</div>
+          <div class="agent-main">
+            <div class="agent-name">${agent.name}</div>
+            <div class="agent-role">${agent.role}</div>
+          </div>
+        </div>
+        <div class="agent-status">
+          <div class="agent-status-dot ${agent.status}"></div>
+          <span>${agent.status}</span>
+        </div>
+      </div>
+      <div class="agent-desc">${agent.desc}</div>
+      <div class="agent-meta">
+        <span>Model: ${agent.model}</span>
+        <span>Last active: ${agent.activity.length > 0 ? timeAgo(new Date(agent.activity[0].time)) : 'Never'}</span>
+      </div>
+      <button class="agent-send-task" onclick="event.stopPropagation(); showSendTaskModal('${agent.id}')">📤 Send Task</button>
+    </div>
+  `).join('');
+}
+
+function showAgentDetail(agentId) {
+  const agent = agents.find(a => a.id === agentId);
+  if (!agent) return;
+
+  currentAgent = agent;
+  const content = document.getElementById('detailContent');
+  
+  content.innerHTML = `
+    <div class="detail-panel-header">
+      <div>
+        <div class="detail-panel-emoji">${agent.emoji}</div>
+      </div>
+      <div>
+        <div class="detail-panel-title">${agent.name}</div>
+        <div class="detail-panel-subtitle">${agent.role}</div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Description</div>
+      <div class="detail-section-content">${agent.desc}</div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Capabilities</div>
+      <ul class="capabilities-list">
+        ${agent.capabilities.map(c => `<li>${c}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Recent Activity</div>
+      <div class="activity-log" id="agentActivityLog">
+        ${agent.activity.length === 0 ? '<div class="activity-log-empty">No activity yet</div>' : 
+          agent.activity.slice(0, 10).map(a => `
+            <div class="activity-log-item">
+              <div class="activity-log-time">${new Date(a.time).toLocaleString()}</div>
+              <div class="activity-log-text">${escapeHtml(a.text)}</div>
+            </div>
+          `).join('')}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Performance Notes</div>
+      <textarea class="performance-notes" id="agentNotes" placeholder="Add notes about this agent's performance...">${agent.notes}</textarea>
+    </div>
+  `;
+
+  document.getElementById('detailOverlay').classList.add('active');
+  document.getElementById('detailPanel').classList.add('active');
+
+  // Auto-save notes
+  setTimeout(() => {
+    const notesEl = document.getElementById('agentNotes');
+    if (notesEl) {
+      notesEl.addEventListener('input', () => {
+        agent.notes = notesEl.value;
+        saveState(STATE_KEYS.agents, agents);
+      });
+    }
+  }, 100);
+}
+
+function closeDetailPanel() {
+  document.getElementById('detailOverlay').classList.remove('active');
+  document.getElementById('detailPanel').classList.remove('active');
+  currentAgent = null;
+}
+
+document.getElementById('detailClose').addEventListener('click', closeDetailPanel);
+document.getElementById('detailOverlay').addEventListener('click', closeDetailPanel);
+
+window.showAgentDetail = showAgentDetail;
+
+/* ============================================
+   COMMAND CENTER — SEND TASK MODAL
+   ============================================ */
+function showSendTaskModal(agentId) {
+  const agent = agents.find(a => a.id === agentId);
+  if (!agent) return;
+
+  document.getElementById('modalTitle').textContent = `📤 Send Task to ${agent.name}`;
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-field">
+      <label>Task Description</label>
+      <textarea id="taskDescription" placeholder="Describe the task..." rows="4"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Priority</label>
+      <select id="taskPrioritySelect">
+        <option value="high">🔴 High</option>
+        <option value="medium" selected>🟡 Medium</option>
+        <option value="low">🟢 Low</option>
+      </select>
+    </div>
+  `;
+
+  // Override modal save
+  const saveBtn = document.getElementById('modalSave');
+  const newSaveBtn = saveBtn.cloneNode(true);
+  saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+  newSaveBtn.addEventListener('click', () => {
+    const description = document.getElementById('taskDescription')?.value.trim();
+    const priority = document.getElementById('taskPrioritySelect')?.value || 'medium';
+    
+    if (!description) return;
+
+    // Add to agent's activity log
+    agent.activity.unshift({
+      time: new Date().toISOString(),
+      text: `[${priority.toUpperCase()}] ${description}`
+    });
+
+    saveState(STATE_KEYS.agents, agents);
+    addActivity(`Sent task to ${agent.name}: ${description}`, 'purple');
+    closeModal();
+    renderAgents();
+  });
+
+  openModal();
+  setTimeout(() => document.getElementById('taskDescription')?.focus(), 100);
+}
+
+window.showSendTaskModal = showSendTaskModal;
+
+/* ============================================
+   COMMAND CENTER — DECISIONS
+   ============================================ */
+function renderDecisions() {
+  const list = document.getElementById('decisionsList');
+  if (decisions.length === 0) {
+    list.innerHTML = '<div class="activity-empty">No decisions recorded yet.</div>';
+    return;
+  }
+
+  list.innerHTML = decisions.map((d, i) => `
+    <div class="decision-item">
+      <div class="decision-date">${d.date}</div>
+      <div class="decision-question">${escapeHtml(d.question)}</div>
+      <div class="decision-summary">${escapeHtml(d.summary)}</div>
+      <div class="decision-agents">
+        ${d.agents.map(a => `<span class="agent-badge">${a}</span>`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+document.getElementById('addDecisionBtn').addEventListener('click', () => {
+  document.getElementById('modalTitle').textContent = '🧠 Add Executive Decision';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-field">
+      <label>Date</label>
+      <input type="date" id="decisionDate" value="${new Date().toISOString().split('T')[0]}">
+    </div>
+    <div class="modal-field">
+      <label>Question / Topic</label>
+      <input type="text" id="decisionQuestion" placeholder="What decision was made?">
+    </div>
+    <div class="modal-field">
+      <label>Decision Summary</label>
+      <textarea id="decisionSummary" placeholder="Brief summary of the decision..." rows="3"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Agents Consulted</label>
+      <input type="text" id="decisionAgents" placeholder="e.g., Mika, Felix">
+    </div>
+  `;
+
+  const saveBtn = document.getElementById('modalSave');
+  const newSaveBtn = saveBtn.cloneNode(true);
+  saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+
+  newSaveBtn.addEventListener('click', () => {
+    const date = document.getElementById('decisionDate')?.value;
+    const question = document.getElementById('decisionQuestion')?.value.trim();
+    const summary = document.getElementById('decisionSummary')?.value.trim();
+    const agentsText = document.getElementById('decisionAgents')?.value.trim();
+
+    if (!question || !summary) return;
+
+    const agentsList = agentsText.split(',').map(a => a.trim()).filter(a => a);
+
+    decisions.unshift({
+      date: date || new Date().toISOString().split('T')[0],
+      question,
+      summary,
+      agents: agentsList
+    });
+
+    saveState(STATE_KEYS.decisions, decisions);
+    addActivity(`New decision: ${question}`, 'purple');
+    renderDecisions();
+    closeModal();
+  });
+
+  openModal();
+  setTimeout(() => document.getElementById('decisionQuestion')?.focus(), 100);
+});
+
+/* ============================================
    MODAL CONTROLS
    ============================================ */
 function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); editingTask = null; }
+function closeModal() { 
+  document.getElementById('modalOverlay').classList.remove('active'); 
+  editingTask = null;
+  
+  // Restore default save handler
+  const saveBtn = document.getElementById('modalSave');
+  const newSaveBtn = saveBtn.cloneNode(true);
+  saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
+  
+  newSaveBtn.addEventListener('click', () => {
+    const title = document.getElementById('taskTitle')?.value.trim();
+    if (!title) return;
+
+    const desc = document.getElementById('taskDesc')?.value.trim();
+    const priority = document.getElementById('taskPriority')?.value || 'medium';
+    const newColumn = document.getElementById('taskColumn')?.value;
+
+    if (editingTask && editingTask.index !== null) {
+      const task = tasks[editingTask.column][editingTask.index];
+      task.title = title;
+      task.desc = desc;
+      task.priority = priority;
+
+      if (newColumn && newColumn !== editingTask.column) {
+        tasks[editingTask.column].splice(editingTask.index, 1);
+        tasks[newColumn].push(task);
+        addActivity(`Moved "${title}" to ${newColumn}`, 'blue');
+      }
+    } else if (editingTask) {
+      tasks[editingTask.column].push({
+        title, desc, priority,
+        created: new Date().toISOString()
+      });
+      addActivity(`Created task: ${title}`, 'green');
+    }
+
+    saveState(STATE_KEYS.tasks, tasks);
+    renderKanban();
+    closeModal();
+  });
+}
 
 document.getElementById('modalCancel').addEventListener('click', closeModal);
 document.getElementById('modalOverlay').addEventListener('click', (e) => {
@@ -1829,14 +2699,14 @@ document.addEventListener('keydown', (e) => {
   }
   if (e.key === 'Escape') {
     closeModal();
+    closeDetailPanel();
     document.getElementById('searchInput').blur();
   }
 });
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
   const q = e.target.value.toLowerCase();
-  // Simple search: filter visible items
-  document.querySelectorAll('.activity-item, .priority-item, .kanban-card').forEach(el => {
+  document.querySelectorAll('.activity-item, .priority-item, .kanban-card, .agent-card').forEach(el => {
     const text = el.textContent.toLowerCase();
     el.style.display = q === '' || text.includes(q) ? '' : 'none';
   });
@@ -1872,8 +2742,10 @@ renderPriorities();
 renderKanban();
 renderTimeline();
 updateMetrics();
+renderAgents();
+renderDecisions();
 
-console.log('🚀 Mission Control initialized');
+console.log('🚀 M3 Mark 3 initialized with Command Center');
 </script>
 </body>
 </html>
