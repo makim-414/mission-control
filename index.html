@@ -1295,54 +1295,57 @@ function saveState(key, data) {
 const TIMELINE_PHASES = [
   {
     id: 'phase1',
-    title: 'Foundation & Core Product',
-    date: 'Feb 1 – Feb 14',
+    title: 'Foundation — Before GEO & Product Core',
+    date: 'Feb 1 – Feb 15',
     status: 'completed',
-    description: 'Establish product-market fit, build core visibility engine.',
+    description: 'Before GEO Report 작성, Semrush 데이터 분석, 핵심 인프라 구축.',
     milestones: [
-      { id: 'm1', text: 'AI Visibility Monitoring MVP' },
-      { id: 'm2', text: 'Multi-engine support (5 engines)' },
-      { id: 'm3', text: 'Basic dashboard & reporting' },
-      { id: 'm4', text: 'First beta user onboarded' }
+      { id: 'm1', text: 'Semrush SEO 데이터 수집 (US/JP/BR × 2 도메인)' },
+      { id: 'm2', text: 'Before GEO Report 99% 완성' },
+      { id: 'm3', text: 'Backlink Disavow 리스트 작성' },
+      { id: 'm4', text: 'Action Plan + 예산 ROI 6.7x 작성' }
     ]
   },
   {
     id: 'phase2',
-    title: 'Growth & Sales Engine',
-    date: 'Feb 15 – Feb 28',
+    title: 'Execution — P0 실행 & Sales 파이프라인',
+    date: 'Feb 16 – Feb 28',
     status: 'current',
-    description: 'Scale sales pipeline, automate outreach, build repeatable process.',
+    description: 'Before GEO P0 긴급 조치 실행, Sales 자동화, 리드 파이프라인 구축.',
     milestones: [
-      { id: 'm5', text: 'Sales automation pipeline' },
-      { id: 'm6', text: 'Lead qualification framework' },
-      { id: 'm7', text: 'Content marketing launch' },
-      { id: 'm8', text: 'First paying customers (5+)' },
-      { id: 'm9', text: 'Partnership outreach (agencies)' }
+      { id: 'm5', text: 'GSC Backlink Disavow 업로드' },
+      { id: 'm6', text: 'bizhows.com/br 폐쇄 → 301 리디렉션' },
+      { id: 'm7', text: '브라질 Paid 테스트 캠페인 런칭' },
+      { id: 'm8', text: 'Sales 자동화 이메일 & 리드 리스트' },
+      { id: 'm9', text: 'CSR Migration Phase 1 (Euisung)' },
+      { id: 'm10', text: 'Japan/Brazil 현지화 (Euisung)' }
     ]
   },
   {
     id: 'phase3',
-    title: 'Scale & Revenue Push',
+    title: 'Scale — Enterprise & Conversion',
     date: 'Mar 1 – Mar 15',
     status: 'upcoming',
-    description: 'Aggressive growth push, enterprise features, pricing optimization.',
+    description: 'Enterprise 기능, PDF 리포트, Stripe 결제, 전환율 최적화.',
     milestones: [
-      { id: 'm10', text: 'Enterprise audit feature' },
-      { id: 'm11', text: 'PDF report generation' },
-      { id: 'm12', text: 'Pricing tier finalization' },
-      { id: 'm13', text: 'First enterprise client' }
+      { id: 'm11', text: 'Visibility Audit → PDF 리포트 자동 생성' },
+      { id: 'm12', text: 'Stripe 결제 통합' },
+      { id: 'm13', text: 'Pricing tier 확정 & 랜딩 페이지' },
+      { id: 'm14', text: 'First 5 paying customers' },
+      { id: 'm15', text: 'Agency partnership 계약 1건+' }
     ]
   },
   {
     id: 'phase4',
-    title: '₩20M MRR Target',
+    title: '🎯 ₩20M MRR Sprint',
     date: 'Mar 16 – Mar 30',
     status: 'upcoming',
-    description: 'Final sprint to hit ₩20M MRR goal. Optimize conversion, close deals.',
+    description: '최종 스프린트. 전환 최적화, 딜 클로징, MRR ₩20M 달성.',
     milestones: [
-      { id: 'm14', text: 'MRR ₩10M milestone' },
-      { id: 'm15', text: 'MRR ₩15M milestone' },
-      { id: 'm16', text: '🎯 MRR ₩20M achieved!' }
+      { id: 'm16', text: 'MRR ₩5M 달성' },
+      { id: 'm17', text: 'MRR ₩10M 달성' },
+      { id: 'm18', text: 'MRR ₩15M 달성' },
+      { id: 'm19', text: '🎯 MRR ₩20M 달성!' }
     ]
   }
 ];
@@ -1350,11 +1353,61 @@ const TIMELINE_PHASES = [
 /* ============================================
    APP INITIALIZATION
    ============================================ */
-let activities = loadState(STATE_KEYS.activities, []);
-let priorities = loadState(STATE_KEYS.priorities, []);
-let tasks = loadState(STATE_KEYS.tasks, { backlog: [], progress: [], done: [] });
-let metrics = loadState(STATE_KEYS.metrics, { mrr: 0, saas: 0 });
-let milestoneState = loadState(STATE_KEYS.milestones, {});
+// Default data — used only on first load (localStorage empty)
+const DEFAULT_ACTIVITIES = [
+  { text: 'Mission Control 대시보드 v2 배포', color: 'green', time: new Date().toISOString() },
+  { text: '모든 세션 Opus 모델로 전환 (→ 2/25 15:00)', color: 'purple', time: '2026-02-24T12:30:00+09:00' },
+  { text: 'Before GEO Report 99% 완료', color: 'green', time: '2026-02-16T02:50:00+09:00' },
+  { text: 'Action Plan 경영진 공유 이메일 작성', color: 'blue', time: '2026-02-16T02:35:00+09:00' },
+  { text: 'Backlink Disavow 리스트 3개 파일 작성', color: 'yellow', time: '2026-02-15T23:51:00+09:00' },
+  { text: 'Commercial 키워드 60개 발굴 (US/JP/BR)', color: 'green', time: '2026-02-19T05:00:00+09:00' },
+  { text: 'Article #7 Strategy C/E 수정 완료', color: 'blue', time: '2026-02-21T18:00:00+09:00' },
+  { text: 'GEO 쿼리 API 비용 분석 → Haiku 권장', color: 'purple', time: '2026-02-20T12:00:00+09:00' }
+];
+
+const DEFAULT_PRIORITIES = [
+  { text: 'Google Search Console Backlink Disavow 업로드', done: false },
+  { text: 'bizhows.com/br 폐쇄 (301 → miricanvas.com/br)', done: false },
+  { text: '브라질 Paid 테스트 캠페인 런칭 ($500-1000)', done: false },
+  { text: 'Before GEO Report 100% 완성 (GEO SaaS 검진 1%)', done: false },
+  { text: 'Sales 자동화 파이프라인 구축', done: false },
+  { text: 'MRR ₩20M 목표 — 첫 Paying Customer 확보', done: false }
+];
+
+const DEFAULT_TASKS = {
+  backlog: [
+    { title: 'Stripe 결제 통합 설정', desc: '결제 시스템 연동', priority: 'medium', created: '2026-02-16T00:00:00+09:00' },
+    { title: '비즈니스 은행 계좌 개설', desc: '', priority: 'medium', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'React 대시보드 전환 검토', desc: '복잡도 증가 시 전환', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'Claude Projects 마이그레이션', desc: 'BIM, PAM, 콘달, PASO', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'Replace @tabler/icons-react with lucide-react', desc: '기술 부채 정리', priority: 'low', created: '2026-02-16T00:00:00+09:00' }
+  ],
+  progress: [
+    { title: 'Before GEO Report P0 실행', desc: 'Disavow 업로드 / bizhows 폐쇄 / 브라질 Paid', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'CSR Migration Phase 1', desc: 'Auth 페이지 CSR 전환 (Euisung)', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'Local → Japan, Brazil 추가', desc: '현지화 작업 (Euisung)', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'Sales 자동화 & 리드 파이프라인', desc: '이메일 자동화, 리드 리스트, 퍼널', priority: 'high', created: '2026-02-24T00:00:00+09:00' },
+    { title: 'Article #8-14 Strategy 적용', desc: 'Strategy C/D/E 적용 대기', priority: 'medium', created: '2026-02-21T00:00:00+09:00' }
+  ],
+  done: [
+    { title: 'Before GEO Report 작성 (99%)', desc: 'Semrush 분석, 경쟁사, GEO 전략, Action Plan', priority: 'high', created: '2026-02-15T00:00:00+09:00' },
+    { title: 'Action Plan 작성', desc: 'Timeline, RACI, 예산, ROI 6.7x', priority: 'high', created: '2026-02-16T00:20:00+09:00' },
+    { title: 'Backlink Disavow 리스트', desc: '3개 파일 작성 완료', priority: 'high', created: '2026-02-15T23:51:00+09:00' },
+    { title: 'Commercial 키워드 60개 발굴', desc: 'US/JP/BR 각 20개', priority: 'medium', created: '2026-02-19T05:00:00+09:00' },
+    { title: 'Article #7 수정', desc: 'Strategy C (FAQ) + E (CTA)', priority: 'medium', created: '2026-02-21T18:00:00+09:00' },
+    { title: 'Delaware 이슈 정리', desc: '8개 이슈 전부 Canceled', priority: 'low', created: '2026-02-16T01:00:00+09:00' }
+  ]
+};
+
+const DEFAULT_METRICS = { mrr: 0, saas: 65 };
+
+const DEFAULT_MILESTONES = { m1: true, m2: true, m3: true, m4: true, m5: true };
+
+let activities = loadState(STATE_KEYS.activities, DEFAULT_ACTIVITIES);
+let priorities = loadState(STATE_KEYS.priorities, DEFAULT_PRIORITIES);
+let tasks = loadState(STATE_KEYS.tasks, DEFAULT_TASKS);
+let metrics = loadState(STATE_KEYS.metrics, DEFAULT_METRICS);
+let milestoneState = loadState(STATE_KEYS.milestones, DEFAULT_MILESTONES);
 
 // Tab Navigation
 const tabBtns = document.querySelectorAll('.tab-btn');
@@ -1687,7 +1740,27 @@ const notesArea = document.getElementById('notesArea');
 const charCount = document.getElementById('charCount');
 const lastSaved = document.getElementById('lastSaved');
 
-notesArea.value = loadState(STATE_KEYS.notes, '') || '';
+const DEFAULT_NOTES = `# Mission Control Notes
+
+## 🎯 핵심 목표
+- MRR ₩20M by March 30
+- Product SaaS Ready
+
+## 📌 이번 주 핵심
+- Before GEO P0 실행 (Disavow, bizhows 폐쇄, 브라질 Paid)
+- Sales 자동화 파이프라인 구축
+- Article #8-14 Strategy 적용 대기
+
+## 💡 메모
+- Claude Sonnet → Haiku 전환하면 GEO 쿼리 비용 월 $17.67 → $5.30
+- Answer Capsule 적용 시 Citation Rate +72.4% 예상
+- 브라질 Paid: 타겟 ROAS > 2.0
+
+## 🔗 중요 링크
+- Dashboard: https://makim-414.github.io/mission-control/
+- Prompt Architect Admin: https://studio.promptarchitect.app/admin
+`;
+notesArea.value = loadState(STATE_KEYS.notes, DEFAULT_NOTES) || '';
 charCount.textContent = `${notesArea.value.length} characters`;
 
 notesArea.addEventListener('input', () => {
