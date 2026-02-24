@@ -1355,51 +1355,67 @@ const TIMELINE_PHASES = [
    ============================================ */
 // Default data — used only on first load (localStorage empty)
 const DEFAULT_ACTIVITIES = [
-  { text: 'Mission Control 대시보드 v2 배포', color: 'green', time: new Date().toISOString() },
-  { text: '모든 세션 Opus 모델로 전환 (→ 2/25 15:00)', color: 'purple', time: '2026-02-24T12:30:00+09:00' },
-  { text: 'Before GEO Report 99% 완료', color: 'green', time: '2026-02-16T02:50:00+09:00' },
-  { text: 'Action Plan 경영진 공유 이메일 작성', color: 'blue', time: '2026-02-16T02:35:00+09:00' },
-  { text: 'Backlink Disavow 리스트 3개 파일 작성', color: 'yellow', time: '2026-02-15T23:51:00+09:00' },
-  { text: 'Commercial 키워드 60개 발굴 (US/JP/BR)', color: 'green', time: '2026-02-19T05:00:00+09:00' },
-  { text: 'Article #7 Strategy C/E 수정 완료', color: 'blue', time: '2026-02-21T18:00:00+09:00' },
-  { text: 'GEO 쿼리 API 비용 분석 → Haiku 권장', color: 'purple', time: '2026-02-20T12:00:00+09:00' }
+  { text: '🖥️ Mission Control v3 배포 (실제 데이터 반영)', color: 'green', time: new Date().toISOString() },
+  { text: '🧠 모든 세션 Opus 모델로 전환 (→ 2/25 15:00)', color: 'purple', time: '2026-02-24T12:30:00+09:00' },
+  { text: '📧 Clay 리드 17개 실제 이메일 발송 (Valentino, Samsung, TikTok 등)', color: 'green', time: '2026-02-23T20:00:00+09:00' },
+  { text: '📊 리드 122→171 확장 (Clay 4배치 임포트)', color: 'blue', time: '2026-02-23T18:00:00+09:00' },
+  { text: '📝 PA Deep Research: Samsung, Celltrion, Naver, 애경산업 (10/10)', color: 'blue', time: '2026-02-23T15:00:00+09:00' },
+  { text: '✉️ 맞춤 이메일 10개 작성 (Samsung, Celltrion, d\'Alba, Anua 등)', color: 'green', time: '2026-02-23T12:00:00+09:00' },
+  { text: '📄 Miricanvas NDA 서명 완료 (조지은 HoM)', color: 'green', time: '2026-02-20T10:00:00+09:00' },
+  { text: '✅ Article #7 Strategy C/E 수정 완료', color: 'blue', time: '2026-02-21T18:00:00+09:00' },
+  { text: '💰 GEO 쿼리 API 비용 분석 → Haiku 권장 (월 $17→$5)', color: 'purple', time: '2026-02-20T12:00:00+09:00' },
+  { text: '🔑 Commercial 키워드 60개 발굴 (US/JP/BR)', color: 'green', time: '2026-02-19T05:00:00+09:00' },
+  { text: '📊 Before GEO Report 99% 완료', color: 'green', time: '2026-02-16T02:50:00+09:00' },
+  { text: '📋 Action Plan 작성 (ROI 6.7x, 예산 $6K-11.2K)', color: 'blue', time: '2026-02-16T00:20:00+09:00' }
 ];
 
 const DEFAULT_PRIORITIES = [
-  { text: 'Google Search Console Backlink Disavow 업로드', done: false },
-  { text: 'bizhows.com/br 폐쇄 (301 → miricanvas.com/br)', done: false },
-  { text: '브라질 Paid 테스트 캠페인 런칭 ($500-1000)', done: false },
-  { text: 'Before GEO Report 100% 완성 (GEO SaaS 검진 1%)', done: false },
-  { text: 'Sales 자동화 파이프라인 구축', done: false },
-  { text: 'MRR ₩20M 목표 — 첫 Paying Customer 확보', done: false }
+  { text: '🔥 Miricanvas GEO 서비스 계약 클로징 (₩500만, NDA 완료)', done: false },
+  { text: '📧 PA 이메일 배치 발송 — 나머지 Clay batch 2-4 (#148-171)', done: false },
+  { text: '📋 GSC Backlink Disavow 업로드', done: false },
+  { text: '🚫 bizhows.com/br 폐쇄 (301 → miricanvas.com/br)', done: false },
+  { text: '🇧🇷 브라질 Paid 테스트 캠페인 런칭 ($500-1000)', done: false },
+  { text: '📝 Before GEO Report 100% 완성 (GEO SaaS 1%)', done: false },
+  { text: '💰 첫 Paying Customer 확보 → MRR ₩20M 시작', done: false },
+  { text: '⚙️ CSR Migration Phase 1 (Euisung)', done: false }
 ];
 
 const DEFAULT_TASKS = {
   backlog: [
     { title: 'Stripe 결제 통합 설정', desc: '결제 시스템 연동', priority: 'medium', created: '2026-02-16T00:00:00+09:00' },
     { title: '비즈니스 은행 계좌 개설', desc: '', priority: 'medium', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'React 대시보드 전환 검토', desc: '복잡도 증가 시 전환', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
     { title: 'Claude Projects 마이그레이션', desc: 'BIM, PAM, 콘달, PASO', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'Replace @tabler/icons-react with lucide-react', desc: '기술 부채 정리', priority: 'low', created: '2026-02-16T00:00:00+09:00' }
+    { title: 'Replace @tabler/icons-react with lucide-react', desc: '기술 부채 정리', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'Vercel 환경변수 세팅', desc: 'DATABASE_URL, Auth', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
+    { title: 'PA 나머지 5개 이메일 작성', desc: 'Fidelity, SentBe, J&J, Pierre Fabre, Barings', priority: 'medium', created: '2026-02-23T00:00:00+09:00' },
+    { title: 'Clay 트렁케이트 이메일 8건 해결', desc: 'Datadog, Siemens, Salesforce×2, ANSYS 등', priority: 'medium', created: '2026-02-23T00:00:00+09:00' },
+    { title: 'makim@pasogallery.com MX 레코드 설정', desc: '이메일 수신 불가 해결', priority: 'medium', created: '2026-02-16T00:00:00+09:00' }
   ],
   progress: [
-    { title: 'Before GEO Report P0 실행', desc: 'Disavow 업로드 / bizhows 폐쇄 / 브라질 Paid', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
+    { title: '🔥 Miricanvas GEO 서비스 계약', desc: 'NDA 서명 완료 (2/20), 계약서 진행 중, ₩500만 (3개월)', priority: 'high', created: '2026-02-20T00:00:00+09:00' },
+    { title: 'PA Sales — 이메일 배치 발송', desc: '171개 리드, 17개 발송 완료, Clay batch 2-4 대기', priority: 'high', created: '2026-02-23T00:00:00+09:00' },
+    { title: 'Before GEO P0 실행', desc: 'Disavow 업로드 / bizhows 폐쇄 / 브라질 Paid', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
     { title: 'CSR Migration Phase 1', desc: 'Auth 페이지 CSR 전환 (Euisung)', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
     { title: 'Local → Japan, Brazil 추가', desc: '현지화 작업 (Euisung)', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'Sales 자동화 & 리드 파이프라인', desc: '이메일 자동화, 리드 리스트, 퍼널', priority: 'high', created: '2026-02-24T00:00:00+09:00' },
-    { title: 'Article #8-14 Strategy 적용', desc: 'Strategy C/D/E 적용 대기', priority: 'medium', created: '2026-02-21T00:00:00+09:00' }
+    { title: 'Article #8-14 Strategy 적용', desc: 'Strategy C/D/E 적용 대기 (Article #7 완료)', priority: 'medium', created: '2026-02-21T00:00:00+09:00' },
+    { title: 'HubSpot AI Search Grader 분석', desc: 'ChatGPT/Perplexity 노출 baseline', priority: 'medium', created: '2026-02-19T00:00:00+09:00' },
+    { title: 'Answer Capsule 테스트', desc: '/features/background-remover, Citation Rate +72.4%', priority: 'medium', created: '2026-02-19T00:00:00+09:00' }
   ],
   done: [
-    { title: 'Before GEO Report 작성 (99%)', desc: 'Semrush 분석, 경쟁사, GEO 전략, Action Plan', priority: 'high', created: '2026-02-15T00:00:00+09:00' },
-    { title: 'Action Plan 작성', desc: 'Timeline, RACI, 예산, ROI 6.7x', priority: 'high', created: '2026-02-16T00:20:00+09:00' },
-    { title: 'Backlink Disavow 리스트', desc: '3개 파일 작성 완료', priority: 'high', created: '2026-02-15T23:51:00+09:00' },
-    { title: 'Commercial 키워드 60개 발굴', desc: 'US/JP/BR 각 20개', priority: 'medium', created: '2026-02-19T05:00:00+09:00' },
+    { title: 'Clay 리드 17개 실발송', desc: 'Valentino, Samsung, TikTok, Kia, DHL, L\'Oréal 등', priority: 'high', created: '2026-02-23T20:00:00+09:00' },
+    { title: 'PA Deep Research 완료', desc: 'Samsung, Celltrion, Naver, 애경산업 (10/10 each)', priority: 'high', created: '2026-02-23T15:00:00+09:00' },
+    { title: '맞춤 이메일 10개 작성', desc: 'Samsung, Celltrion, d\'Alba, Anua 등', priority: 'high', created: '2026-02-23T12:00:00+09:00' },
+    { title: 'Miricanvas NDA 서명', desc: '조지은 Head of Marketing', priority: 'high', created: '2026-02-20T10:00:00+09:00' },
+    { title: 'Before GEO Report 99%', desc: 'Semrush 분석, 경쟁사, GEO 전략, Action Plan', priority: 'high', created: '2026-02-16T02:50:00+09:00' },
+    { title: 'Action Plan 작성', desc: 'Timeline, RACI, 예산 $6K-11.2K, ROI 6.7x', priority: 'high', created: '2026-02-16T00:20:00+09:00' },
+    { title: 'Backlink Disavow 리스트 3개', desc: 'bizhows + miricanvas', priority: 'high', created: '2026-02-15T23:51:00+09:00' },
+    { title: 'Commercial 키워드 60개', desc: 'US/JP/BR 각 20개', priority: 'medium', created: '2026-02-19T05:00:00+09:00' },
     { title: 'Article #7 수정', desc: 'Strategy C (FAQ) + E (CTA)', priority: 'medium', created: '2026-02-21T18:00:00+09:00' },
-    { title: 'Delaware 이슈 정리', desc: '8개 이슈 전부 Canceled', priority: 'low', created: '2026-02-16T01:00:00+09:00' }
+    { title: 'Delaware 이슈 8개 정리', desc: 'Linear에서 전부 Canceled', priority: 'low', created: '2026-02-16T01:00:00+09:00' }
   ]
 };
 
-const DEFAULT_METRICS = { mrr: 0, saas: 65 };
+const DEFAULT_METRICS = { mrr: 0, saas: 70 };
 
 const DEFAULT_MILESTONES = { m1: true, m2: true, m3: true, m4: true, m5: true };
 
@@ -1745,20 +1761,43 @@ const DEFAULT_NOTES = `# Mission Control Notes
 ## 🎯 핵심 목표
 - MRR ₩20M by March 30
 - Product SaaS Ready
+- First Paying Customer → Scale
 
-## 📌 이번 주 핵심
-- Before GEO P0 실행 (Disavow, bizhows 폐쇄, 브라질 Paid)
-- Sales 자동화 파이프라인 구축
-- Article #8-14 Strategy 적용 대기
+## 🔥 계약 진행 중
+- Miricanvas GEO 서비스 계약 — ₩500만 (3개월 컨설팅)
+- 조지은 (jejo01@miridih.com) - Head of Marketing
+- NDA 서명 완료 (2/20), 계약서 진행 중
+
+## 📧 PA Sales Pipeline
+- 총 리드: 171개 (all-leads-merged.md)
+- 실발송: 17개 (Clay batch 1)
+- 미발송: Clay batch 2-4 (#148-171), Priority 1&2 나머지
+- 마스터 템플릿: pa-email-master-template.md
+- 서명: IRONACT, Inc / Prompt Architect / Mark Kim
+
+## 📊 검증된 통계 (이메일용)
+- 47% AI 구매 리서치 (Attest 2025)
+- 67% Gen Z AI 사용 (IAB UK 2025.09)
+- ChatGPT 800M WAU (Sam Altman Oct 2025)
+- McKinsey: ~50% consumers use AI search
+- $750B through AI search by 2028
+
+## 📌 주요 규칙
+- ❌ 숫자/팩트 추정 절대 금지
+- ❌ 이메일 발송 전 반드시 사용자 확인
+- ❌ 미션 범위 확대 해석 금지
+- ✅ 새 지시 → 기존 원칙 충돌 체크 먼저
 
 ## 💡 메모
-- Claude Sonnet → Haiku 전환하면 GEO 쿼리 비용 월 $17.67 → $5.30
-- Answer Capsule 적용 시 Citation Rate +72.4% 예상
-- 브라질 Paid: 타겟 ROAS > 2.0
+- Claude Sonnet → Haiku: GEO 쿼리 월 $17.67 → $5.30
+- Answer Capsule: Citation Rate +72.4%
+- 브라질 Paid: 타겟 ROAS > 2.0, $500-1000
+- gog CLI: --from 플래그 사용 X (not verified 에러)
 
 ## 🔗 중요 링크
 - Dashboard: https://makim-414.github.io/mission-control/
-- Prompt Architect Admin: https://studio.promptarchitect.app/admin
+- PA Admin: https://studio.promptarchitect.app/admin
+- Figma 소개서: https://www.figma.com/deck/SdDEUwIgQsq8OqLp1kCiEf
 `;
 notesArea.value = loadState(STATE_KEYS.notes, DEFAULT_NOTES) || '';
 charCount.textContent = `${notesArea.value.length} characters`;
