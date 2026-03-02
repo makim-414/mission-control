@@ -1,1879 +1,457 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mission Control — Mark</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-/* ============================================
-   CSS VARIABLES — Easy re-theming
-   ============================================ */
-:root {
-  --bg-primary: #050508;
-  --bg-secondary: #0a0a10;
-  --bg-card: rgba(15, 15, 25, 0.6);
-  --bg-card-hover: rgba(20, 20, 35, 0.8);
-  --bg-glass: rgba(15, 15, 25, 0.7);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-hover: rgba(255, 255, 255, 0.12);
-  --accent: #4F46E5;
-  --accent-light: #6366F1;
-  --accent-glow: rgba(79, 70, 229, 0.3);
-  --accent-subtle: rgba(79, 70, 229, 0.1);
-  --text-primary: #F1F1F4;
-  --text-secondary: #8B8BA3;
-  --text-muted: #5A5A72;
-  --success: #10B981;
-  --warning: #F59E0B;
-  --danger: #EF4444;
-  --info: #3B82F6;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 0.75rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --spacing-2xl: 2.5rem;
-  --blur: 20px;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* ============================================
-   RESET & BASE
-   ============================================ */
-*, *::before, *::after {
-  margin: 0; padding: 0; box-sizing: border-box;
-}
-
-html { scroll-behavior: smooth; }
-
-body {
-  font-family: 'Inter', -apple-system, sans-serif;
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  line-height: 1.6;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Subtle background grid */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 20% 50%, rgba(79, 70, 229, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.03) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: 0;
-}
-
-::selection {
-  background: var(--accent);
-  color: white;
-}
-
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
-
-/* ============================================
-   ANIMATIONS
-   ============================================ */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.15); }
-}
-
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.animate-in {
-  animation: fadeInUp 0.5s ease forwards;
-  opacity: 0;
-}
-
-.animate-in:nth-child(1) { animation-delay: 0.05s; }
-.animate-in:nth-child(2) { animation-delay: 0.1s; }
-.animate-in:nth-child(3) { animation-delay: 0.15s; }
-.animate-in:nth-child(4) { animation-delay: 0.2s; }
-.animate-in:nth-child(5) { animation-delay: 0.25s; }
-.animate-in:nth-child(6) { animation-delay: 0.3s; }
-
-/* ============================================
-   HEADER
-   ============================================ */
-.header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--bg-glass);
-  backdrop-filter: blur(var(--blur));
-  -webkit-backdrop-filter: blur(var(--blur));
-  border-bottom: 1px solid var(--border-subtle);
-  padding: 0 var(--spacing-2xl);
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-}
-
-.logo {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--accent), var(--accent-light));
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  font-weight: 800;
-  color: white;
-}
-
-.header-title {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-}
-
-.header-subtitle {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
-  margin-left: 2px;
-}
-
-/* Tab Navigation */
-.tab-nav {
-  display: flex;
-  gap: 4px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 4px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-subtle);
-}
-
-.tab-btn {
-  padding: 8px 16px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: var(--transition);
-  white-space: nowrap;
-}
-
-.tab-btn:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.tab-btn.active {
-  color: white;
-  background: var(--accent);
-  box-shadow: 0 2px 8px var(--accent-glow);
-}
-
-/* Header Right */
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
-}
-
-.search-box {
-  position: relative;
-}
-
-.search-box input {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px 8px 34px;
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  width: 200px;
-  transition: var(--transition);
-  outline: none;
-}
-
-.search-box input::placeholder { color: var(--text-muted); }
-
-.search-box input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-subtle);
-  width: 260px;
-}
-
-.search-box .search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  font-size: 14px;
-}
-
-.search-box .shortcut {
-  position: absolute;
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 10px;
-  color: var(--text-muted);
-  background: rgba(255,255,255,0.06);
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-weight: 600;
-}
-
-.status-dot {
-  width: 10px;
-  height: 10px;
-  background: var(--success);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
-}
-
-/* ============================================
-   MAIN LAYOUT
-   ============================================ */
-.main {
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: var(--spacing-2xl);
-  position: relative;
-  z-index: 1;
-}
-
-.tab-content {
-  display: none;
-}
-
-.tab-content.active {
-  display: block;
-}
-
-/* ============================================
-   WELCOME BAR
-   ============================================ */
-.welcome-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-xl);
-  padding: var(--spacing-lg) 0;
-}
-
-.welcome-text h1 {
-  font-size: 28px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  margin-bottom: 4px;
-}
-
-.welcome-text h1 span {
-  background: linear-gradient(135deg, var(--accent-light), #818CF8);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.welcome-text p {
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-
-.live-time {
-  text-align: right;
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.live-time .time {
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ============================================
-   METRIC CARDS
-   ============================================ */
-.metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--spacing-lg);
-  margin-bottom: var(--spacing-xl);
-}
-
-.metric-card {
-  background: var(--bg-card);
-  backdrop-filter: blur(var(--blur));
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  position: relative;
-  overflow: hidden;
-  transition: var(--transition);
-  cursor: default;
-}
-
-.metric-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-}
-
-.metric-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
-.metric-card:nth-child(2)::before { background: linear-gradient(90deg, var(--success), #34D399); }
-.metric-card:nth-child(3)::before { background: linear-gradient(90deg, var(--warning), #FBBF24); }
-.metric-card:nth-child(4)::before { background: linear-gradient(90deg, var(--danger), #F87171); }
-
-.metric-card:hover {
-  background: var(--bg-card-hover);
-  border-color: var(--border-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-}
-
-.metric-icon {
-  font-size: 20px;
-  margin-bottom: var(--spacing-sm);
-  display: inline-block;
-}
-
-.metric-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--spacing-xs);
-}
-
-.metric-value {
-  font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-bottom: 4px;
-  font-variant-numeric: tabular-nums;
-}
-
-.metric-trend {
-  font-size: 12px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.metric-trend.up { color: var(--success); }
-.metric-trend.down { color: var(--danger); }
-.metric-trend.neutral { color: var(--text-muted); }
-
-/* ============================================
-   DASHBOARD GRID (Activity + Priorities)
-   ============================================ */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-lg);
-}
-
-.card {
-  background: var(--bg-card);
-  backdrop-filter: blur(var(--blur));
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  transition: var(--transition);
-}
-
-.card:hover {
-  border-color: var(--border-hover);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-lg);
-}
-
-.card-title {
-  font-size: 16px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.card-action {
-  padding: 6px 14px;
-  background: var(--accent-subtle);
-  color: var(--accent-light);
-  border: 1px solid rgba(79, 70, 229, 0.2);
-  border-radius: var(--radius-sm);
-  font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.card-action:hover {
-  background: var(--accent);
-  color: white;
-}
-
-/* Activity Feed */
-.activity-feed {
-  max-height: 360px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.activity-item {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
-  animation: slideIn 0.3s ease forwards;
-}
-
-.activity-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.activity-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-top: 7px;
-  flex-shrink: 0;
-}
-
-.activity-dot.blue { background: var(--info); }
-.activity-dot.green { background: var(--success); }
-.activity-dot.yellow { background: var(--warning); }
-.activity-dot.purple { background: var(--accent-light); }
-
-.activity-text {
-  font-size: 13px;
-  color: var(--text-primary);
-  flex: 1;
-}
-
-.activity-time {
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.activity-empty {
-  text-align: center;
-  padding: var(--spacing-xl);
-  color: var(--text-muted);
-  font-size: 13px;
-}
-
-/* Priorities */
-.priority-list {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.priority-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
-  cursor: default;
-}
-
-.priority-item:hover {
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.priority-item.completed .priority-text {
-  text-decoration: line-through;
-  color: var(--text-muted);
-}
-
-.priority-checkbox {
-  width: 18px;
-  height: 18px;
-  border: 2px solid var(--text-muted);
-  border-radius: 5px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-  flex-shrink: 0;
-  font-size: 10px;
-  color: transparent;
-}
-
-.priority-checkbox:hover {
-  border-color: var(--accent-light);
-}
-
-.priority-checkbox.checked {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: white;
-}
-
-.priority-text {
-  font-size: 13px;
-  flex: 1;
-  color: var(--text-primary);
-}
-
-.priority-delete {
-  opacity: 0;
-  color: var(--text-muted);
-  cursor: pointer;
-  font-size: 14px;
-  transition: var(--transition);
-  padding: 2px 6px;
-  border-radius: 4px;
-}
-
-.priority-item:hover .priority-delete { opacity: 1; }
-.priority-delete:hover { color: var(--danger); background: rgba(239, 68, 68, 0.1); }
-
-/* Add Priority Input */
-.add-priority {
-  display: flex;
-  gap: var(--spacing-xs);
-  margin-top: var(--spacing-md);
-}
-
-.add-priority input {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  outline: none;
-  transition: var(--transition);
-}
-
-.add-priority input::placeholder { color: var(--text-muted); }
-.add-priority input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-subtle); }
-
-/* ============================================
-   PROJECTS TAB — KANBAN
-   ============================================ */
-.kanban {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-lg);
-  min-height: 500px;
-}
-
-.kanban-column {
-  background: var(--bg-card);
-  backdrop-filter: blur(var(--blur));
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-lg);
-  display: flex;
-  flex-direction: column;
-}
-
-.kanban-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-lg);
-  padding-bottom: var(--spacing-md);
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.kanban-title {
-  font-size: 14px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-}
-
-.kanban-count {
-  background: rgba(255, 255, 255, 0.06);
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-secondary);
-}
-
-.kanban-add {
-  width: 28px;
-  height: 28px;
-  border: 1px dashed var(--text-muted);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-muted);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  transition: var(--transition);
-}
-
-.kanban-add:hover {
-  border-color: var(--accent-light);
-  color: var(--accent-light);
-  background: var(--accent-subtle);
-}
-
-.kanban-cards {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-  overflow-y: auto;
-}
-
-.kanban-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-md);
-  cursor: pointer;
-  transition: var(--transition);
-  position: relative;
-}
-
-.kanban-card:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--border-hover);
-  transform: translateY(-1px);
-}
-
-.kanban-card-title {
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.kanban-card-desc {
-  font-size: 12px;
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-sm);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.kanban-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.priority-badge {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  padding: 2px 8px;
-  border-radius: 10px;
-  letter-spacing: 0.05em;
-}
-
-.priority-badge.high { background: rgba(239, 68, 68, 0.15); color: #F87171; }
-.priority-badge.medium { background: rgba(245, 158, 11, 0.15); color: #FBBF24; }
-.priority-badge.low { background: rgba(16, 185, 129, 0.15); color: #34D399; }
-
-.kanban-card-date {
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.kanban-card-delete {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  opacity: 0;
-  font-size: 12px;
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 4px;
-  transition: var(--transition);
-}
-
-.kanban-card:hover .kanban-card-delete { opacity: 1; }
-.kanban-card-delete:hover { color: var(--danger); background: rgba(239, 68, 68, 0.1); }
-
-/* ============================================
-   TIMELINE TAB
-   ============================================ */
-.timeline {
-  position: relative;
-  padding-left: 40px;
-}
-
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 15px;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--accent), var(--border-subtle));
-}
-
-.timeline-phase {
-  position: relative;
-  margin-bottom: var(--spacing-xl);
-}
-
-.timeline-dot {
-  position: absolute;
-  left: -33px;
-  top: 4px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  border: 3px solid var(--bg-primary);
-  z-index: 1;
-}
-
-.timeline-phase.current .timeline-dot {
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--accent-glow);
-}
-
-.timeline-phase.completed .timeline-dot {
-  background: var(--success);
-}
-
-.timeline-card {
-  background: var(--bg-card);
-  backdrop-filter: blur(var(--blur));
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  transition: var(--transition);
-}
-
-.timeline-phase.current .timeline-card {
-  border-color: rgba(79, 70, 229, 0.3);
-  box-shadow: 0 0 20px var(--accent-subtle);
-}
-
-.timeline-card:hover {
-  border-color: var(--border-hover);
-}
-
-.timeline-date {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent-light);
-  margin-bottom: 6px;
-}
-
-.timeline-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.timeline-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-md);
-}
-
-.timeline-milestones {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.timeline-milestone {
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  cursor: pointer;
-  color: var(--text-secondary);
-  transition: var(--transition);
-}
-
-.timeline-milestone:hover { color: var(--text-primary); }
-
-.milestone-check {
-  width: 16px;
-  height: 16px;
-  border: 2px solid var(--text-muted);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  color: transparent;
-  transition: var(--transition);
-  flex-shrink: 0;
-}
-
-.milestone-check.checked {
-  background: var(--success);
-  border-color: var(--success);
-  color: white;
-}
-
-/* ============================================
-   NOTES TAB
-   ============================================ */
-.notes-container {
-  background: var(--bg-card);
-  backdrop-filter: blur(var(--blur));
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-}
-
-.notes-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-lg);
-}
-
-.notes-info {
-  display: flex;
-  gap: var(--spacing-lg);
-  font-size: 12px;
-  color: var(--text-muted);
-}
-
-.notes-textarea {
-  width: 100%;
-  min-height: 500px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-xl);
-  color: var(--text-primary);
-  font-family: 'Inter', monospace;
-  font-size: 14px;
-  line-height: 1.8;
-  resize: vertical;
-  outline: none;
-  transition: var(--transition);
-}
-
-.notes-textarea::placeholder { color: var(--text-muted); }
-.notes-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-subtle); }
-
-/* ============================================
-   MODAL
-   ============================================ */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  z-index: 200;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: var(--transition);
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.modal {
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  padding: var(--spacing-xl);
-  width: 420px;
-  max-width: 90vw;
-  transform: scale(0.95);
-  transition: var(--transition);
-}
-
-.modal-overlay.active .modal {
-  transform: scale(1);
-}
-
-.modal h3 {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: var(--spacing-lg);
-}
-
-.modal-field {
-  margin-bottom: var(--spacing-md);
-}
-
-.modal-field label {
-  display: block;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-bottom: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.modal-field input,
-.modal-field textarea,
-.modal-field select {
-  width: 100%;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  outline: none;
-  transition: var(--transition);
-}
-
-.modal-field textarea { min-height: 80px; resize: vertical; }
-.modal-field select { cursor: pointer; }
-.modal-field input:focus,
-.modal-field textarea:focus,
-.modal-field select:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-subtle);
-}
-
-.modal-field select option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-}
-
-.modal-actions {
-  display: flex;
-  gap: var(--spacing-sm);
-  justify-content: flex-end;
-  margin-top: var(--spacing-lg);
-}
-
-.btn {
-  padding: 10px 20px;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-family: 'Inter', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.btn-primary {
-  background: var(--accent);
-  color: white;
-}
-
-.btn-primary:hover {
-  background: var(--accent-light);
-  box-shadow: 0 4px 12px var(--accent-glow);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text-secondary);
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 1200px) {
-  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
-  .kanban { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 768px) {
-  .header { padding: 0 var(--spacing-md); }
-  .header-subtitle, .search-box .shortcut { display: none; }
-  .tab-btn { padding: 8px 10px; font-size: 12px; }
-  .main { padding: var(--spacing-md); }
-  .metrics-grid { grid-template-columns: 1fr; }
-  .dashboard-grid { grid-template-columns: 1fr; }
-  .welcome-bar { flex-direction: column; align-items: flex-start; gap: var(--spacing-md); }
-  .live-time { text-align: left; }
-  .search-box input { width: 140px; }
-  .search-box input:focus { width: 180px; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Dashboard - Makim's Workspace</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 3em;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        .timestamp {
+            text-align: center;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .stats {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            font-size: 1.3em;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .stat-box {
+            background: rgba(255,255,255,0.25);
+            padding: 20px 35px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+        }
+        .p0::before { background: linear-gradient(90deg, #ef4444, #dc2626); }
+        .p1::before { background: linear-gradient(90deg, #f59e0b, #facc15); }
+        .p2::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .contract::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .project::before { background: linear-gradient(90deg, #3b82f6, #2563eb); }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+        .section-title {
+            font-size: 2.2em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 40px;
+            background: #f3f4f6;
+            border-radius: 20px;
+            overflow: hidden;
+            margin-top: 20px;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .task-list {
+            list-style: none;
+        }
+        .task-item {
+            background: #f9fafb;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+        .task-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .task-item.p0 { border-left-color: #ef4444; }
+        .task-item.p1 { border-left-color: #f59e0b; }
+        .task-item.done { 
+            border-left-color: #10b981;
+            background: #f0fdf4;
+            opacity: 0.8;
+        }
+        .task-title {
+            font-weight: bold;
+            font-size: 1.15em;
+            margin-bottom: 8px;
+        }
+        .task-meta {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .task-note {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #6b21a8;
+        }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .stats { flex-direction: column; }
+        }
+    </style>
 </head>
 <body>
-
-<!-- ============================================
-     HEADER
-     ============================================ -->
-<header class="header">
-  <div class="header-left">
-    <div class="logo">M</div>
-    <div>
-      <div class="header-title">Mission Control</div>
-      <div class="header-subtitle">Prompt Architect</div>
-    </div>
-  </div>
-
-  <nav class="tab-nav">
-    <button class="tab-btn active" data-tab="dashboard">📊 Dashboard</button>
-    <button class="tab-btn" data-tab="projects">📋 Projects</button>
-    <button class="tab-btn" data-tab="timeline">📅 Timeline</button>
-    <button class="tab-btn" data-tab="notes">📝 Notes</button>
-  </nav>
-
-  <div class="header-right">
-    <div class="search-box">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search...">
-      <span class="shortcut">⌘K</span>
-    </div>
-    <div class="status-dot" title="System Online"></div>
-  </div>
-</header>
-
-<!-- ============================================
-     MAIN CONTENT
-     ============================================ -->
-<main class="main">
-
-  <!-- ========== DASHBOARD TAB ========== -->
-  <div class="tab-content active" id="tab-dashboard">
-    <!-- Welcome Bar -->
-    <div class="welcome-bar animate-in">
-      <div class="welcome-text">
-        <h1 id="welcomeMsg">Good morning, <span>Mark</span></h1>
-        <p id="welcomeDate"></p>
-      </div>
-      <div class="live-time">
-        <div class="time" id="liveTime"></div>
-        <div id="liveDate"></div>
-      </div>
-    </div>
-
-    <!-- Metric Cards -->
-    <div class="metrics-grid">
-      <div class="metric-card animate-in">
-        <div class="metric-icon">💰</div>
-        <div class="metric-label">MRR Progress</div>
-        <div class="metric-value" id="mrrValue">₩0</div>
-        <div class="metric-trend neutral" id="mrrTrend">
-          <span>→</span> Target: ₩20M
+    <div class="container">
+        <h1>🎯 Makim's Dashboard</h1>
+        <div class="timestamp">마지막 업데이트: 2026-03-02 (월) 16:00
+        
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number">99%</div>
+                <div>Before GEO 완료</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">5개</div>
+                <div>P0 긴급 작업</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number">1개</div>
+                <div>계약 진행 중</div>
+            </div>
         </div>
-      </div>
-      <div class="metric-card animate-in">
-        <div class="metric-icon">🚀</div>
-        <div class="metric-label">SaaS Ready</div>
-        <div class="metric-value" id="saasValue">0%</div>
-        <div class="metric-trend neutral" id="saasTrend">
-          <span>→</span> Product completion
+        
+        <!-- 계약 진행 중 -->
+        <div class="section contract">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>🔥</span>
+                    계약 진행 중
+                </div>
+            </div>
+            <div class="task-list">
+                <div class="task-item">
+                    <div class="task-title">Miricanvas - GEO 서비스 계약</div>
+                    <div class="task-meta">조지은 (jejo01@miridih.com) - Head of Marketing</div>
+                    <div class="task-note">
+                        ✅ NDA 서명 완료 (2/20)<br>
+                        📄 GEO 서비스 계약서 진행 중<br>
+                        💰 500만원 (첫 3개월 GEO 컨설팅)
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="metric-card animate-in">
-        <div class="metric-icon">📁</div>
-        <div class="metric-label">Active Projects</div>
-        <div class="metric-value" id="projectsValue">0</div>
-        <div class="metric-trend neutral">
-          <span>→</span> In progress
+
+        <!-- 현재 진행 중인 프로젝트 -->
+        <div class="section project">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>📊</span>
+                    Before GEO Report - miricanvas
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 99%;">99%</div>
+            </div>
+            <div style="margin-top: 20px; color: #666;">
+                <strong>위치:</strong> /workspace/clients/miricanvas-beforeGEO/<br>
+                <strong>남은 작업:</strong> GEO SaaS 검진 1%
+            </div>
+            <div style="margin-top: 20px;">
+                <h3 style="margin-bottom: 15px; color: #10b981;">✅ 완료 항목 (99%)</h3>
+                <ul style="color: #666; line-height: 2; margin-left: 20px;">
+                    <li>Semrush SEO 데이터 수집 (US/JP/BR)</li>
+                    <li>Executive Summary 작성</li>
+                    <li>경쟁 환경 분석 (경쟁사 Top 5, AI Cited Sources)</li>
+                    <li>GEO 전략 제안 (시장별 상세 전략 + KPI)</li>
+                    <li>GEO 최적화 돌파구 (11개 지표, Answer Capsule 72.4%)</li>
+                    <li>Action Plan (Timeline, RACI, 예산, ROI 6.7x)</li>
+                    <li>Backlink Disavow 리스트 (3개 파일)</li>
+                    <li>Commercial Keywords 발굴 완료 (2026-02-19 05:00)</li>
+                </ul>
+            </div>
         </div>
-      </div>
-      <div class="metric-card animate-in">
-        <div class="metric-icon">⏳</div>
-        <div class="metric-label">Days to Goal</div>
-        <div class="metric-value" id="daysValue">0</div>
-        <div class="metric-trend neutral" id="daysTrend">
-          <span>→</span> March 30 deadline
+
+        <!-- P0 긴급 -->
+        <div class="section p0">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>🚨</span>
+                    P0 - 긴급 (이번 주)
+                </div>
+            </div>
+            <ul class="task-list">
+                <li class="task-item p0">
+                    <div class="task-title">미리디 미팅 후 실행 계획 확정</div>
+                    <div class="task-meta">📅 미팅 이후 | ⏱️ 대기 중</div>
+                    <div class="task-note">
+                        ✅ 미팅 준비 완료: 토킹포인트, 하우스데이터 분석<br>
+                        대기: Backlink Disavow 업로드<br>
+                        대기: bizhows.com/br 폐쇄 (301 리디렉션)<br>
+                        대기: 브라질 Paid 테스트 캠페인 ($500-1000)
+                    </div>
+                </li>
+                <li class="task-item p0">
+                    <div class="task-title">Classys 이메일 발송</div>
+                    <div class="task-meta">✅ 승인됨 | ⚠️ 미실행</div>
+                    <div class="task-note">Top 5 타겟 중 최우선 순위</div>
+                </li>
+                <li class="task-item p0">
+                    <div class="task-title">Clay Batch 2 발송</div>
+                    <div class="task-meta">✅ 승인됨 | ⚠️ 미실행</div>
+                    <div class="task-note">20개 이메일 개인화 초안 완료</div>
+                </li>
+                <li class="task-item p0">
+                    <div class="task-title">d'Alba 미팅 준비</div>
+                    <div class="task-meta">📊 MECE 3축 전략</div>
+                    <div class="task-note">
+                        Structured Data / Content Authority / Technical Crawlability<br>
+                        ✅ 토킹포인트 준비 완료
+                    </div>
+                </li>
+                <li class="task-item p0">
+                    <div class="task-title">makim@pasogallery.com MX 레코드 설정</div>
+                    <div class="task-meta">📧 이메일 수신 불가 해결</div>
+                </li>
+            </ul>
         </div>
-      </div>
+
+        <!-- P1 이번 주 -->
+        <div class="section p1">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>📋</span>
+                    P1 - 이번 주
+                </div>
+            </div>
+            <ul class="task-list">
+                <li class="task-item p1">
+                    <div class="task-title">크몽 심사 완료 확인</div>
+                    <div class="task-meta">📅 심사 ~7영업일</div>
+                    <div class="task-note">
+                        등록: IT·프로그래밍 > AI 시스템·서비스<br>
+                        경력 상세 탭 교정 필요 (브라우저 작업)
+                    </div>
+                </li>
+                <li class="task-item p1">
+                    <div class="task-title">Pricing v2 최종 확인</div>
+                    <div class="task-note">
+                        Lite ₩49만/Starter ₩99만/Growth ₩250만/Enterprise ₩500만+
+                    </div>
+                </li>
+                <li class="task-item p1">
+                    <div class="task-title">promptarchitect.app 오타 수정</div>
+                    <div class="task-meta">⚠️ Framer 수동 작업 필요</div>
+                </li>
+                <li class="task-item p1">
+                    <div class="task-title">MRR 목표 재설정 확인</div>
+                    <div class="task-note">
+                        Base ₩8M / Stretch ₩12M<br>
+                        (₩20M은 34일 내 <3% 확률)
+                    </div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">✅ 멀티에이전트 팀 Day 1-2 완료</div>
+                    <div class="task-meta">완료: 2026-02-26</div>
+                    <div class="task-note">
+                        마케터/세일즈/전략/애널/개발자 (전원 Opus)<br>
+                        ICP 세그먼트: 171 리드 → 28 Tier 1<br>
+                        병원/클리닉 #1 신규 버티컬
+                    </div>
+                </li>
+                <li class="task-item p1">
+                    <div class="task-title">Move 사이클 재개 여부</div>
+                    <div class="task-meta">⏸️ 2/26 23:36 중단됨 | 📋 사용자 지시 대기</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">✅ Before GEO Report 100% 완성</div>
+                    <div class="task-meta">📌 GEO SaaS 검진 1% 남음</div>
+                    <div class="task-note">
+                        나머지 프롬프트 상세 분석 (P-01, P-03, P-07, P-08) - 선택사항
+                    </div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">✅ M3 Mark 3 대시보드 완성</div>
+                    <div class="task-meta">완료: 2026-02-26</div>
+                    <div class="task-note">
+                        mission-control.html<br>
+                        GitHub: makim-414/mission-control
+                    </div>
+                </li>
+                <li class="task-item p1">
+                    <div class="task-title">Linear 이슈 상태 확인</div>
+                    <div class="task-note">
+                        "Local -> Japan, Brazil" 진행 상태 확인 (Euisung)<br>
+                        CSR Migration Phase 1 담당자 배정
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 최근 완료 -->
+        <div class="section p2">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>✅</span>
+                    최근 완료 (2/15 ~ 2/27)
+                </div>
+            </div>
+            <ul class="task-list">
+                <li class="task-item done">
+                    <div class="task-title">멀티에이전트 팀 Day 1-2 완료</div>
+                    <div class="task-meta">2026-02-26</div>
+                    <div class="task-note">
+                        ICP 세그먼트: 171 리드 → 28 Tier 1<br>
+                        병원/클리닉 #1 신규 버티컬 발굴
+                    </div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">M3 Mark 3 대시보드 완성</div>
+                    <div class="task-meta">2026-02-26</div>
+                    <div class="task-note">
+                        mission-control.html<br>
+                        GitHub: makim-414/mission-control
+                    </div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">ChainShift 경쟁사 분석</div>
+                    <div class="task-meta">2026-02-26</div>
+                    <div class="task-note">
+                        한국 GEO 경쟁사: 4개월, ₩3.5억 매출<br>
+                        클라이언트: 아모레퍼시픽, 달바
+                    </div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">글로벌 50+ GEO 도구 분석</div>
+                    <div class="task-meta">2026-02-26</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">15+ 산업 분석</div>
+                    <div class="task-meta">2026-02-26</div>
+                    <div class="task-note">
+                        ChatGPT Korea MAU 21.6M<br>
+                        Gartner 2026 검색 -25% 전망
+                    </div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">Before GEO Report 99% 완성</div>
+                    <div class="task-meta">2026-02-16 02:45</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">GEO 최적화 돌파구 작성 (11개 지표, 15.3KB)</div>
+                    <div class="task-meta">2026-02-16 02:45</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">Action Plan 작성 (11.6KB, Timeline, RACI, 예산, ROI 6.7x)</div>
+                    <div class="task-meta">2026-02-16 00:20</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">Backlink Disavow 리스트 작성 (3개 파일)</div>
+                    <div class="task-meta">2026-02-15 23:51</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">Delaware/세금 관련 Linear 이슈 8개 취소 처리</div>
+                    <div class="task-meta">2026-02-16 01:00</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">nick.oh@ironact.net 계정 삭제</div>
+                    <div class="task-meta">2026-02-15</div>
+                </li>
+                <li class="task-item done">
+                    <div class="task-title">Commercial Keywords 발굴 (60개)</div>
+                    <div class="task-meta">2026-02-19 05:00 (자동)</div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 자동화 상태 -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-title">
+                    <span>⏰</span>
+                    자동화 (Cron Jobs)
+                </div>
+            </div>
+            <ul class="task-list">
+                <li class="task-item">
+                    <div class="task-title">새벽 2:30 / 5:00 - TODO 자동 처리</div>
+                    <div class="task-meta">✅ Sonnet 베이스 + Opus spawn 가능 (최대 2회)</div>
+                </li>
+                <li class="task-item">
+                    <div class="task-title">매일 9시 - 아침 브리핑</div>
+                    <div class="task-meta">✅ 어제 진행사항 + 오늘 할 일 + Linear 우선순위</div>
+                </li>
+                <li class="task-item">
+                    <div class="task-title">9/13/15/17시 - Slack DM 체크</div>
+                    <div class="task-meta">✅ 설정 완료 (DM 채널 ID 지정 필요)</div>
+                </li>
+                <li class="task-item">
+                    <div class="task-title">매 시간 - 대시보드 자동 업데이트</div>
+                    <div class="task-meta">✅ 이 페이지 자동 갱신 중</div>
+                </li>
+            </ul>
+        </div>
     </div>
-
-    <!-- Dashboard Grid -->
-    <div class="dashboard-grid">
-      <!-- Activity Feed -->
-      <div class="card animate-in">
-        <div class="card-header">
-          <div class="card-title">⚡ Activity Feed</div>
-          <button class="card-action" id="addActivityBtn">+ Add</button>
-        </div>
-        <div class="activity-feed" id="activityFeed">
-          <div class="activity-empty">No activity yet. Start by adding something!</div>
-        </div>
-      </div>
-
-      <!-- Top Priorities -->
-      <div class="card animate-in">
-        <div class="card-header">
-          <div class="card-title">🎯 Top Priorities</div>
-          <button class="card-action" id="addPriorityBtn">+ Add</button>
-        </div>
-        <div class="priority-list" id="priorityList"></div>
-        <div class="add-priority">
-          <input type="text" id="newPriorityInput" placeholder="Add a priority... (Enter to save)">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========== PROJECTS TAB ========== -->
-  <div class="tab-content" id="tab-projects">
-    <div class="welcome-bar animate-in">
-      <div class="welcome-text">
-        <h1>📋 Project Board</h1>
-        <p>Organize and track your work</p>
-      </div>
-    </div>
-    <div class="kanban" id="kanbanBoard">
-      <div class="kanban-column" data-column="backlog">
-        <div class="kanban-header">
-          <div class="kanban-title">📥 Backlog <span class="kanban-count" data-count="backlog">0</span></div>
-          <button class="kanban-add" data-column="backlog" title="Add task">+</button>
-        </div>
-        <div class="kanban-cards" data-cards="backlog"></div>
-      </div>
-      <div class="kanban-column" data-column="progress">
-        <div class="kanban-header">
-          <div class="kanban-title">🔨 In Progress <span class="kanban-count" data-count="progress">0</span></div>
-          <button class="kanban-add" data-column="progress" title="Add task">+</button>
-        </div>
-        <div class="kanban-cards" data-cards="progress"></div>
-      </div>
-      <div class="kanban-column" data-column="done">
-        <div class="kanban-header">
-          <div class="kanban-title">✅ Done <span class="kanban-count" data-count="done">0</span></div>
-          <button class="kanban-add" data-column="done" title="Add task">+</button>
-        </div>
-        <div class="kanban-cards" data-cards="done"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========== TIMELINE TAB ========== -->
-  <div class="tab-content" id="tab-timeline">
-    <div class="welcome-bar animate-in">
-      <div class="welcome-text">
-        <h1>📅 Roadmap</h1>
-        <p>Path to ₩20M MRR by March 30</p>
-      </div>
-    </div>
-    <div class="timeline" id="timelineContainer"></div>
-  </div>
-
-  <!-- ========== NOTES TAB ========== -->
-  <div class="tab-content" id="tab-notes">
-    <div class="welcome-bar animate-in">
-      <div class="welcome-text">
-        <h1>📝 Notes</h1>
-        <p>Your scratchpad — auto-saves on every keystroke</p>
-      </div>
-    </div>
-    <div class="notes-container animate-in">
-      <div class="notes-header">
-        <div class="card-title">📝 Quick Notes</div>
-        <div class="notes-info">
-          <span id="charCount">0 characters</span>
-          <span id="lastSaved">Not saved yet</span>
-        </div>
-      </div>
-      <textarea class="notes-textarea" id="notesArea" placeholder="Start writing... Your notes auto-save."></textarea>
-    </div>
-  </div>
-
-</main>
-
-<!-- ============================================
-     MODAL
-     ============================================ -->
-<div class="modal-overlay" id="modalOverlay">
-  <div class="modal" id="modal">
-    <h3 id="modalTitle">Add Task</h3>
-    <div id="modalBody"></div>
-    <div class="modal-actions">
-      <button class="btn btn-secondary" id="modalCancel">Cancel</button>
-      <button class="btn btn-primary" id="modalSave">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================
-     JAVASCRIPT
-     ============================================ -->
-<script>
-/* ============================================
-   STATE MANAGEMENT
-   ============================================ */
-const STATE_KEYS = {
-  activities: 'mc_activities',
-  priorities: 'mc_priorities',
-  tasks: 'mc_tasks',
-  notes: 'mc_notes',
-  metrics: 'mc_metrics',
-  milestones: 'mc_milestones',
-  activeTab: 'mc_activeTab'
-};
-
-function loadState(key, fallback) {
-  try {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : fallback;
-  } catch { return fallback; }
-}
-
-function saveState(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
-}
-
-/* ============================================
-   TIMELINE CONFIG
-   ============================================ */
-const TIMELINE_PHASES = [
-  {
-    id: 'phase1',
-    title: 'Foundation — Before GEO & Product Core',
-    date: 'Feb 1 – Feb 15',
-    status: 'completed',
-    description: 'Before GEO Report 작성, Semrush 데이터 분석, 핵심 인프라 구축.',
-    milestones: [
-      { id: 'm1', text: 'Semrush SEO 데이터 수집 (US/JP/BR × 2 도메인)' },
-      { id: 'm2', text: 'Before GEO Report 99% 완성' },
-      { id: 'm3', text: 'Backlink Disavow 리스트 작성' },
-      { id: 'm4', text: 'Action Plan + 예산 ROI 6.7x 작성' }
-    ]
-  },
-  {
-    id: 'phase2',
-    title: 'Execution — P0 실행 & Sales 파이프라인',
-    date: 'Feb 16 – Feb 28',
-    status: 'current',
-    description: 'Before GEO P0 긴급 조치 실행, Sales 자동화, 리드 파이프라인 구축.',
-    milestones: [
-      { id: 'm5', text: 'GSC Backlink Disavow 업로드' },
-      { id: 'm6', text: 'bizhows.com/br 폐쇄 → 301 리디렉션' },
-      { id: 'm7', text: '브라질 Paid 테스트 캠페인 런칭' },
-      { id: 'm8', text: 'Sales 자동화 이메일 & 리드 리스트' },
-      { id: 'm9', text: 'CSR Migration Phase 1 (Euisung)' },
-      { id: 'm10', text: 'Japan/Brazil 현지화 (Euisung)' }
-    ]
-  },
-  {
-    id: 'phase3',
-    title: 'Scale — Enterprise & Conversion',
-    date: 'Mar 1 – Mar 15',
-    status: 'upcoming',
-    description: 'Enterprise 기능, PDF 리포트, Stripe 결제, 전환율 최적화.',
-    milestones: [
-      { id: 'm11', text: 'Visibility Audit → PDF 리포트 자동 생성' },
-      { id: 'm12', text: 'Stripe 결제 통합' },
-      { id: 'm13', text: 'Pricing tier 확정 & 랜딩 페이지' },
-      { id: 'm14', text: 'First 5 paying customers' },
-      { id: 'm15', text: 'Agency partnership 계약 1건+' }
-    ]
-  },
-  {
-    id: 'phase4',
-    title: '🎯 ₩20M MRR Sprint',
-    date: 'Mar 16 – Mar 30',
-    status: 'upcoming',
-    description: '최종 스프린트. 전환 최적화, 딜 클로징, MRR ₩20M 달성.',
-    milestones: [
-      { id: 'm16', text: 'MRR ₩5M 달성' },
-      { id: 'm17', text: 'MRR ₩10M 달성' },
-      { id: 'm18', text: 'MRR ₩15M 달성' },
-      { id: 'm19', text: '🎯 MRR ₩20M 달성!' }
-    ]
-  }
-];
-
-/* ============================================
-   APP INITIALIZATION
-   ============================================ */
-// Default data — used only on first load (localStorage empty)
-const DEFAULT_ACTIVITIES = [
-  { text: '🖥️ Mission Control v3 배포 (실제 데이터 반영)', color: 'green', time: new Date().toISOString() },
-  { text: '🧠 모든 세션 Opus 모델로 전환 (→ 2/25 15:00)', color: 'purple', time: '2026-02-24T12:30:00+09:00' },
-  { text: '📧 Clay 리드 17개 실제 이메일 발송 (Valentino, Samsung, TikTok 등)', color: 'green', time: '2026-02-23T20:00:00+09:00' },
-  { text: '📊 리드 122→171 확장 (Clay 4배치 임포트)', color: 'blue', time: '2026-02-23T18:00:00+09:00' },
-  { text: '📝 PA Deep Research: Samsung, Celltrion, Naver, 애경산업 (10/10)', color: 'blue', time: '2026-02-23T15:00:00+09:00' },
-  { text: '✉️ 맞춤 이메일 10개 작성 (Samsung, Celltrion, d\'Alba, Anua 등)', color: 'green', time: '2026-02-23T12:00:00+09:00' },
-  { text: '📄 Miricanvas NDA 서명 완료 (조지은 HoM)', color: 'green', time: '2026-02-20T10:00:00+09:00' },
-  { text: '✅ Article #7 Strategy C/E 수정 완료', color: 'blue', time: '2026-02-21T18:00:00+09:00' },
-  { text: '💰 GEO 쿼리 API 비용 분석 → Haiku 권장 (월 $17→$5)', color: 'purple', time: '2026-02-20T12:00:00+09:00' },
-  { text: '🔑 Commercial 키워드 60개 발굴 (US/JP/BR)', color: 'green', time: '2026-02-19T05:00:00+09:00' },
-  { text: '📊 Before GEO Report 99% 완료', color: 'green', time: '2026-02-16T02:50:00+09:00' },
-  { text: '📋 Action Plan 작성 (ROI 6.7x, 예산 $6K-11.2K)', color: 'blue', time: '2026-02-16T00:20:00+09:00' }
-];
-
-const DEFAULT_PRIORITIES = [
-  { text: '🔥 Miricanvas GEO 서비스 계약 클로징 (₩500만, NDA 완료)', done: false },
-  { text: '📧 PA 이메일 배치 발송 — 나머지 Clay batch 2-4 (#148-171)', done: false },
-  { text: '📋 GSC Backlink Disavow 업로드', done: false },
-  { text: '🚫 bizhows.com/br 폐쇄 (301 → miricanvas.com/br)', done: false },
-  { text: '🇧🇷 브라질 Paid 테스트 캠페인 런칭 ($500-1000)', done: false },
-  { text: '📝 Before GEO Report 100% 완성 (GEO SaaS 1%)', done: false },
-  { text: '💰 첫 Paying Customer 확보 → MRR ₩20M 시작', done: false },
-  { text: '⚙️ CSR Migration Phase 1 (Euisung)', done: false }
-];
-
-const DEFAULT_TASKS = {
-  backlog: [
-    { title: 'Stripe 결제 통합 설정', desc: '결제 시스템 연동', priority: 'medium', created: '2026-02-16T00:00:00+09:00' },
-    { title: '비즈니스 은행 계좌 개설', desc: '', priority: 'medium', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'Claude Projects 마이그레이션', desc: 'BIM, PAM, 콘달, PASO', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'Replace @tabler/icons-react with lucide-react', desc: '기술 부채 정리', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'Vercel 환경변수 세팅', desc: 'DATABASE_URL, Auth', priority: 'low', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'PA 나머지 5개 이메일 작성', desc: 'Fidelity, SentBe, J&J, Pierre Fabre, Barings', priority: 'medium', created: '2026-02-23T00:00:00+09:00' },
-    { title: 'Clay 트렁케이트 이메일 8건 해결', desc: 'Datadog, Siemens, Salesforce×2, ANSYS 등', priority: 'medium', created: '2026-02-23T00:00:00+09:00' },
-    { title: 'makim@pasogallery.com MX 레코드 설정', desc: '이메일 수신 불가 해결', priority: 'medium', created: '2026-02-16T00:00:00+09:00' }
-  ],
-  progress: [
-    { title: '🔥 Miricanvas GEO 서비스 계약', desc: 'NDA 서명 완료 (2/20), 계약서 진행 중, ₩500만 (3개월)', priority: 'high', created: '2026-02-20T00:00:00+09:00' },
-    { title: 'PA Sales — 이메일 배치 발송', desc: '171개 리드, 17개 발송 완료, Clay batch 2-4 대기', priority: 'high', created: '2026-02-23T00:00:00+09:00' },
-    { title: 'Before GEO P0 실행', desc: 'Disavow 업로드 / bizhows 폐쇄 / 브라질 Paid', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'CSR Migration Phase 1', desc: 'Auth 페이지 CSR 전환 (Euisung)', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'Local → Japan, Brazil 추가', desc: '현지화 작업 (Euisung)', priority: 'high', created: '2026-02-16T00:00:00+09:00' },
-    { title: 'Article #8-14 Strategy 적용', desc: 'Strategy C/D/E 적용 대기 (Article #7 완료)', priority: 'medium', created: '2026-02-21T00:00:00+09:00' },
-    { title: 'HubSpot AI Search Grader 분석', desc: 'ChatGPT/Perplexity 노출 baseline', priority: 'medium', created: '2026-02-19T00:00:00+09:00' },
-    { title: 'Answer Capsule 테스트', desc: '/features/background-remover, Citation Rate +72.4%', priority: 'medium', created: '2026-02-19T00:00:00+09:00' }
-  ],
-  done: [
-    { title: 'Clay 리드 17개 실발송', desc: 'Valentino, Samsung, TikTok, Kia, DHL, L\'Oréal 등', priority: 'high', created: '2026-02-23T20:00:00+09:00' },
-    { title: 'PA Deep Research 완료', desc: 'Samsung, Celltrion, Naver, 애경산업 (10/10 each)', priority: 'high', created: '2026-02-23T15:00:00+09:00' },
-    { title: '맞춤 이메일 10개 작성', desc: 'Samsung, Celltrion, d\'Alba, Anua 등', priority: 'high', created: '2026-02-23T12:00:00+09:00' },
-    { title: 'Miricanvas NDA 서명', desc: '조지은 Head of Marketing', priority: 'high', created: '2026-02-20T10:00:00+09:00' },
-    { title: 'Before GEO Report 99%', desc: 'Semrush 분석, 경쟁사, GEO 전략, Action Plan', priority: 'high', created: '2026-02-16T02:50:00+09:00' },
-    { title: 'Action Plan 작성', desc: 'Timeline, RACI, 예산 $6K-11.2K, ROI 6.7x', priority: 'high', created: '2026-02-16T00:20:00+09:00' },
-    { title: 'Backlink Disavow 리스트 3개', desc: 'bizhows + miricanvas', priority: 'high', created: '2026-02-15T23:51:00+09:00' },
-    { title: 'Commercial 키워드 60개', desc: 'US/JP/BR 각 20개', priority: 'medium', created: '2026-02-19T05:00:00+09:00' },
-    { title: 'Article #7 수정', desc: 'Strategy C (FAQ) + E (CTA)', priority: 'medium', created: '2026-02-21T18:00:00+09:00' },
-    { title: 'Delaware 이슈 8개 정리', desc: 'Linear에서 전부 Canceled', priority: 'low', created: '2026-02-16T01:00:00+09:00' }
-  ]
-};
-
-const DEFAULT_METRICS = { mrr: 0, saas: 70 };
-
-const DEFAULT_MILESTONES = { m1: true, m2: true, m3: true, m4: true, m5: true };
-
-let activities = loadState(STATE_KEYS.activities, DEFAULT_ACTIVITIES);
-let priorities = loadState(STATE_KEYS.priorities, DEFAULT_PRIORITIES);
-let tasks = loadState(STATE_KEYS.tasks, DEFAULT_TASKS);
-let metrics = loadState(STATE_KEYS.metrics, DEFAULT_METRICS);
-let milestoneState = loadState(STATE_KEYS.milestones, DEFAULT_MILESTONES);
-
-// Tab Navigation
-const tabBtns = document.querySelectorAll('.tab-btn');
-const tabContents = document.querySelectorAll('.tab-content');
-const savedTab = loadState(STATE_KEYS.activeTab, 'dashboard');
-
-function switchTab(tabId) {
-  tabBtns.forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
-  tabContents.forEach(c => c.classList.toggle('active', c.id === `tab-${tabId}`));
-  saveState(STATE_KEYS.activeTab, tabId);
-}
-
-tabBtns.forEach(btn => {
-  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-});
-
-switchTab(savedTab);
-
-/* ============================================
-   LIVE CLOCK & GREETING
-   ============================================ */
-function updateClock() {
-  const now = new Date();
-  const h = now.getHours();
-  const greeting = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-
-  document.getElementById('welcomeMsg').innerHTML = `${greeting}, <span>Mark</span>`;
-  document.getElementById('liveTime').textContent = now.toLocaleTimeString('en-US', {
-    hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false
-  });
-  document.getElementById('liveDate').textContent = now.toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-  });
-  document.getElementById('welcomeDate').textContent = now.toLocaleDateString('en-US', {
-    weekday: 'long', month: 'long', day: 'numeric'
-  }) + ' — Let\'s make progress.';
-
-  // Days to goal
-  const goalDate = new Date('2026-03-30');
-  const diffDays = Math.ceil((goalDate - now) / (1000 * 60 * 60 * 24));
-  document.getElementById('daysValue').textContent = Math.max(0, diffDays);
-  const daysTrend = document.getElementById('daysTrend');
-  if (diffDays <= 7) {
-    daysTrend.className = 'metric-trend down';
-    daysTrend.innerHTML = '<span>🔥</span> Final stretch!';
-  } else if (diffDays <= 14) {
-    daysTrend.className = 'metric-trend neutral';
-    daysTrend.innerHTML = '<span>⚡</span> Two weeks left';
-  }
-}
-
-updateClock();
-setInterval(updateClock, 1000);
-
-/* ============================================
-   METRICS
-   ============================================ */
-function updateMetrics() {
-  // MRR
-  document.getElementById('mrrValue').textContent = `₩${(metrics.mrr / 10000).toFixed(0)}만`;
-  const mrrPercent = Math.round((metrics.mrr / 20000000) * 100);
-  const mrrTrend = document.getElementById('mrrTrend');
-  mrrTrend.innerHTML = `<span>${mrrPercent > 50 ? '↑' : '→'}</span> ${mrrPercent}% of ₩20M target`;
-  mrrTrend.className = `metric-trend ${mrrPercent > 50 ? 'up' : 'neutral'}`;
-
-  // SaaS Ready
-  document.getElementById('saasValue').textContent = `${metrics.saas}%`;
-  const saasTrend = document.getElementById('saasTrend');
-  saasTrend.innerHTML = `<span>${metrics.saas > 50 ? '↑' : '→'}</span> Product completion`;
-  saasTrend.className = `metric-trend ${metrics.saas > 80 ? 'up' : 'neutral'}`;
-
-  // Active Projects
-  const activeCount = tasks.progress.length;
-  document.getElementById('projectsValue').textContent = activeCount;
-}
-
-// Click metric cards to edit
-document.querySelectorAll('.metric-card').forEach((card, i) => {
-  if (i < 2) { // Only MRR and SaaS are editable
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
-      const field = i === 0 ? 'mrr' : 'saas';
-      const label = i === 0 ? 'MRR (₩)' : 'SaaS Ready (%)';
-      const val = prompt(`Enter ${label}:`, metrics[field]);
-      if (val !== null && !isNaN(val)) {
-        metrics[field] = Number(val);
-        saveState(STATE_KEYS.metrics, metrics);
-        updateMetrics();
-        addActivity(`Updated ${label} to ${val}`, 'purple');
-      }
-    });
-  }
-});
-
-/* ============================================
-   ACTIVITY FEED
-   ============================================ */
-function addActivity(text, color = 'blue') {
-  activities.unshift({
-    text,
-    color,
-    time: new Date().toISOString()
-  });
-  if (activities.length > 50) activities = activities.slice(0, 50);
-  saveState(STATE_KEYS.activities, activities);
-  renderActivities();
-}
-
-function renderActivities() {
-  const feed = document.getElementById('activityFeed');
-  if (activities.length === 0) {
-    feed.innerHTML = '<div class="activity-empty">No activity yet. Start by adding something!</div>';
-    return;
-  }
-  feed.innerHTML = activities.map(a => {
-    const ago = timeAgo(new Date(a.time));
-    return `<div class="activity-item">
-      <div class="activity-dot ${a.color}"></div>
-      <div class="activity-text">${escapeHtml(a.text)}</div>
-      <div class="activity-time">${ago}</div>
-    </div>`;
-  }).join('');
-}
-
-document.getElementById('addActivityBtn').addEventListener('click', () => {
-  const text = prompt('Activity note:');
-  if (text && text.trim()) addActivity(text.trim(), 'blue');
-});
-
-/* ============================================
-   PRIORITIES
-   ============================================ */
-function renderPriorities() {
-  const list = document.getElementById('priorityList');
-  if (priorities.length === 0) {
-    list.innerHTML = '<div class="activity-empty" style="padding:1rem">No priorities set.</div>';
-    return;
-  }
-  list.innerHTML = priorities.map((p, i) => `
-    <div class="priority-item ${p.done ? 'completed' : ''}">
-      <div class="priority-checkbox ${p.done ? 'checked' : ''}" onclick="togglePriority(${i})">✓</div>
-      <div class="priority-text">${escapeHtml(p.text)}</div>
-      <div class="priority-delete" onclick="deletePriority(${i})">✕</div>
-    </div>
-  `).join('');
-}
-
-window.togglePriority = function(i) {
-  priorities[i].done = !priorities[i].done;
-  saveState(STATE_KEYS.priorities, priorities);
-  renderPriorities();
-  if (priorities[i].done) addActivity(`Completed: ${priorities[i].text}`, 'green');
-};
-
-window.deletePriority = function(i) {
-  priorities.splice(i, 1);
-  saveState(STATE_KEYS.priorities, priorities);
-  renderPriorities();
-};
-
-document.getElementById('newPriorityInput').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter' && e.target.value.trim()) {
-    priorities.push({ text: e.target.value.trim(), done: false });
-    saveState(STATE_KEYS.priorities, priorities);
-    renderPriorities();
-    addActivity(`New priority: ${e.target.value.trim()}`, 'yellow');
-    e.target.value = '';
-  }
-});
-
-document.getElementById('addPriorityBtn').addEventListener('click', () => {
-  document.getElementById('newPriorityInput').focus();
-});
-
-/* ============================================
-   KANBAN BOARD
-   ============================================ */
-let editingTask = null;
-
-function renderKanban() {
-  ['backlog', 'progress', 'done'].forEach(col => {
-    const container = document.querySelector(`[data-cards="${col}"]`);
-    const countEl = document.querySelector(`[data-count="${col}"]`);
-    countEl.textContent = tasks[col].length;
-
-    if (tasks[col].length === 0) {
-      container.innerHTML = '<div class="activity-empty" style="padding:2rem;font-size:12px">No tasks</div>';
-      return;
-    }
-
-    container.innerHTML = tasks[col].map((t, i) => `
-      <div class="kanban-card" onclick="editTask('${col}', ${i})">
-        <div class="kanban-card-delete" onclick="event.stopPropagation(); deleteTask('${col}', ${i})">✕</div>
-        <div class="kanban-card-title">${escapeHtml(t.title)}</div>
-        ${t.desc ? `<div class="kanban-card-desc">${escapeHtml(t.desc)}</div>` : ''}
-        <div class="kanban-card-footer">
-          <span class="priority-badge ${t.priority}">${t.priority}</span>
-          <span class="kanban-card-date">${formatDate(t.created)}</span>
-        </div>
-      </div>
-    `).join('');
-  });
-  updateMetrics();
-}
-
-function showTaskModal(column, taskIndex = null) {
-  const isEdit = taskIndex !== null;
-  const task = isEdit ? tasks[column][taskIndex] : { title: '', desc: '', priority: 'medium' };
-  editingTask = { column, index: taskIndex };
-
-  document.getElementById('modalTitle').textContent = isEdit ? 'Edit Task' : 'New Task';
-  document.getElementById('modalBody').innerHTML = `
-    <div class="modal-field">
-      <label>Title</label>
-      <input type="text" id="taskTitle" value="${escapeHtml(task.title)}" placeholder="Task title...">
-    </div>
-    <div class="modal-field">
-      <label>Description</label>
-      <textarea id="taskDesc" placeholder="Optional description...">${escapeHtml(task.desc || '')}</textarea>
-    </div>
-    <div class="modal-field">
-      <label>Priority</label>
-      <select id="taskPriority">
-        <option value="high" ${task.priority === 'high' ? 'selected' : ''}>🔴 High</option>
-        <option value="medium" ${task.priority === 'medium' ? 'selected' : ''}>🟡 Medium</option>
-        <option value="low" ${task.priority === 'low' ? 'selected' : ''}>🟢 Low</option>
-      </select>
-    </div>
-    ${isEdit ? `
-    <div class="modal-field">
-      <label>Move to</label>
-      <select id="taskColumn">
-        <option value="backlog" ${column === 'backlog' ? 'selected' : ''}>📥 Backlog</option>
-        <option value="progress" ${column === 'progress' ? 'selected' : ''}>🔨 In Progress</option>
-        <option value="done" ${column === 'done' ? 'selected' : ''}>✅ Done</option>
-      </select>
-    </div>` : ''}
-  `;
-
-  openModal();
-  setTimeout(() => document.getElementById('taskTitle').focus(), 100);
-}
-
-document.getElementById('modalSave').addEventListener('click', () => {
-  const title = document.getElementById('taskTitle')?.value.trim();
-  if (!title) return;
-
-  const desc = document.getElementById('taskDesc')?.value.trim();
-  const priority = document.getElementById('taskPriority')?.value || 'medium';
-  const newColumn = document.getElementById('taskColumn')?.value;
-
-  if (editingTask.index !== null) {
-    // Edit existing
-    const task = tasks[editingTask.column][editingTask.index];
-    task.title = title;
-    task.desc = desc;
-    task.priority = priority;
-
-    if (newColumn && newColumn !== editingTask.column) {
-      tasks[editingTask.column].splice(editingTask.index, 1);
-      tasks[newColumn].push(task);
-      addActivity(`Moved "${title}" to ${newColumn}`, 'blue');
-    }
-  } else {
-    // New task
-    tasks[editingTask.column].push({
-      title, desc, priority,
-      created: new Date().toISOString()
-    });
-    addActivity(`Created task: ${title}`, 'green');
-  }
-
-  saveState(STATE_KEYS.tasks, tasks);
-  renderKanban();
-  closeModal();
-});
-
-window.editTask = function(col, i) { showTaskModal(col, i); };
-window.deleteTask = function(col, i) {
-  const name = tasks[col][i].title;
-  tasks[col].splice(i, 1);
-  saveState(STATE_KEYS.tasks, tasks);
-  renderKanban();
-  addActivity(`Deleted task: ${name}`, 'yellow');
-};
-
-document.querySelectorAll('.kanban-add').forEach(btn => {
-  btn.addEventListener('click', () => showTaskModal(btn.dataset.column));
-});
-
-/* ============================================
-   TIMELINE
-   ============================================ */
-function renderTimeline() {
-  const container = document.getElementById('timelineContainer');
-  container.innerHTML = TIMELINE_PHASES.map(phase => {
-    const statusClass = phase.status === 'current' ? 'current' : phase.status === 'completed' ? 'completed' : '';
-    return `
-      <div class="timeline-phase ${statusClass} animate-in">
-        <div class="timeline-dot"></div>
-        <div class="timeline-card">
-          <div class="timeline-date">${phase.date}</div>
-          <div class="timeline-title">${phase.title}</div>
-          <div class="timeline-desc">${phase.description}</div>
-          <ul class="timeline-milestones">
-            ${phase.milestones.map(m => {
-              const checked = milestoneState[m.id] || false;
-              return `<li class="timeline-milestone" onclick="toggleMilestone('${m.id}', this)">
-                <span class="milestone-check ${checked ? 'checked' : ''}">✓</span>
-                <span style="${checked ? 'text-decoration:line-through;color:var(--text-muted)' : ''}">${m.text}</span>
-              </li>`;
-            }).join('')}
-          </ul>
-        </div>
-      </div>
-    `;
-  }).join('');
-}
-
-window.toggleMilestone = function(id, el) {
-  milestoneState[id] = !milestoneState[id];
-  saveState(STATE_KEYS.milestones, milestoneState);
-  renderTimeline();
-};
-
-/* ============================================
-   NOTES
-   ============================================ */
-const notesArea = document.getElementById('notesArea');
-const charCount = document.getElementById('charCount');
-const lastSaved = document.getElementById('lastSaved');
-
-const DEFAULT_NOTES = `# Mission Control Notes
-
-## 🎯 핵심 목표
-- MRR ₩20M by March 30
-- Product SaaS Ready
-- First Paying Customer → Scale
-
-## 🔥 계약 진행 중
-- Miricanvas GEO 서비스 계약 — ₩500만 (3개월 컨설팅)
-- 조지은 (jejo01@miridih.com) - Head of Marketing
-- NDA 서명 완료 (2/20), 계약서 진행 중
-
-## 📧 PA Sales Pipeline
-- 총 리드: 171개 (all-leads-merged.md)
-- 실발송: 17개 (Clay batch 1)
-- 미발송: Clay batch 2-4 (#148-171), Priority 1&2 나머지
-- 마스터 템플릿: pa-email-master-template.md
-- 서명: IRONACT, Inc / Prompt Architect / Mark Kim
-
-## 📊 검증된 통계 (이메일용)
-- 47% AI 구매 리서치 (Attest 2025)
-- 67% Gen Z AI 사용 (IAB UK 2025.09)
-- ChatGPT 800M WAU (Sam Altman Oct 2025)
-- McKinsey: ~50% consumers use AI search
-- $750B through AI search by 2028
-
-## 📌 주요 규칙
-- ❌ 숫자/팩트 추정 절대 금지
-- ❌ 이메일 발송 전 반드시 사용자 확인
-- ❌ 미션 범위 확대 해석 금지
-- ✅ 새 지시 → 기존 원칙 충돌 체크 먼저
-
-## 💡 메모
-- Claude Sonnet → Haiku: GEO 쿼리 월 $17.67 → $5.30
-- Answer Capsule: Citation Rate +72.4%
-- 브라질 Paid: 타겟 ROAS > 2.0, $500-1000
-- gog CLI: --from 플래그 사용 X (not verified 에러)
-
-## 🔗 중요 링크
-- Dashboard: https://makim-414.github.io/mission-control/
-- PA Admin: https://studio.promptarchitect.app/admin
-- Figma 소개서: https://www.figma.com/deck/SdDEUwIgQsq8OqLp1kCiEf
-`;
-notesArea.value = loadState(STATE_KEYS.notes, DEFAULT_NOTES) || '';
-charCount.textContent = `${notesArea.value.length} characters`;
-
-notesArea.addEventListener('input', () => {
-  saveState(STATE_KEYS.notes, notesArea.value);
-  charCount.textContent = `${notesArea.value.length} characters`;
-  lastSaved.textContent = `Saved ${new Date().toLocaleTimeString()}`;
-});
-
-/* ============================================
-   MODAL CONTROLS
-   ============================================ */
-function openModal() { document.getElementById('modalOverlay').classList.add('active'); }
-function closeModal() { document.getElementById('modalOverlay').classList.remove('active'); editingTask = null; }
-
-document.getElementById('modalCancel').addEventListener('click', closeModal);
-document.getElementById('modalOverlay').addEventListener('click', (e) => {
-  if (e.target === e.currentTarget) closeModal();
-});
-
-/* ============================================
-   SEARCH (Cmd+K)
-   ============================================ */
-document.addEventListener('keydown', (e) => {
-  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-    e.preventDefault();
-    document.getElementById('searchInput').focus();
-  }
-  if (e.key === 'Escape') {
-    closeModal();
-    document.getElementById('searchInput').blur();
-  }
-});
-
-document.getElementById('searchInput').addEventListener('input', (e) => {
-  const q = e.target.value.toLowerCase();
-  // Simple search: filter visible items
-  document.querySelectorAll('.activity-item, .priority-item, .kanban-card').forEach(el => {
-    const text = el.textContent.toLowerCase();
-    el.style.display = q === '' || text.includes(q) ? '' : 'none';
-  });
-});
-
-/* ============================================
-   UTILITY FUNCTIONS
-   ============================================ */
-function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-
-function timeAgo(date) {
-  const diff = (Date.now() - date.getTime()) / 1000;
-  if (diff < 60) return 'just now';
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-}
-
-function formatDate(iso) {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-/* ============================================
-   INITIAL RENDER
-   ============================================ */
-renderActivities();
-renderPriorities();
-renderKanban();
-renderTimeline();
-updateMetrics();
-
-console.log('🚀 Mission Control initialized');
-</script>
 </body>
 </html>
